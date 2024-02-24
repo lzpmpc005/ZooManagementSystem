@@ -1,0 +1,22 @@
+
+{% load static %}
+
+<div class="header">
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/navbar.css' %}">
+    <a href="/" class="logo">
+        <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo-img" />
+        <h1>CyberZoo</h1>
+    </a>
+    <form method="GET" action="{% url 'home' %}" class="search-form">
+        <input type="text" name="q" placeholder="Search Habitats"/>
+    </form>
+    <div class="user-actions">
+        {% if request.user.is_authenticated %}
+            <p>Welcome, {{ request.user }} !</p>
+            <a href="{% url 'logout' %}">Logout</a>
+        {% else %}
+            <a href="{% url 'login' %}">Login</a>
+        {% endif %}
+    </div>
+</div>
+<hr>

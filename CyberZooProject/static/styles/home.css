@@ -1,0 +1,67 @@
+    .habitats-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        grid-gap: 20px;
+    }
+
+    .habitat-card {
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 20px;
+        text-align: center;
+        position: relative;
+    }
+
+    .habitat-image {
+        width: 270px;
+        height: 180px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+
+    .action-links {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .action-links a {
+        margin-left: 10px;
+    }
+
+    .create-habitat-button {
+        display: inline-block;
+        padding: 10px 20px;
+        background-color: #0056b3;
+        color: #fff;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+        margin-bottom: 20px;
+    }
+
+    .create-habitat-button:hover {
+        background-color: #0046b3;
+    }
+
+    .habitat-name {
+        font-weight: bold;
+        margin-bottom: 10px;
+    }
+
+    .create-staff-button {
+    display: inline-block;
+    padding: 10px 20px;
+    background-color: #0056b3;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+    margin-bottom: 20px;
+    }
+
+    .create-staff-button:hover {
+        background-color: #0046b3;
+    }

@@ -1,0 +1,21 @@
+{% extends 'main.html' %}
+
+{% block content %}
+    <h1>{{ habitat.name }}</h1>
+
+    <p>{{ habitat.description }}</p>
+
+    <div class="comment-wrapper">
+        <hr>
+        <h3>Animals</h3>
+        
+            {% for animal in animals %}
+                <div>
+                <li>{{ animal.species }}</li>
+                <img src="{{ animal.image }}" alt="{{ animal.species }}" width="200" height="200">
+
+                </div>
+            {% endfor %}
+
+    </div>
+{% endblock %}
