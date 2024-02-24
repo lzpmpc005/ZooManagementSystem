@@ -1,0 +1,29 @@
+.logo-img {
+    width: 80px;
+    height: auto;
+    margin-right: 10px;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.search-form {
+    margin-right: 200px;
+}
+
+.user-actions {
+    display: flex;
+    align-items: center;
+}
+
+.user-actions p, .user-actions a {
+    margin-left: 10px;
+}

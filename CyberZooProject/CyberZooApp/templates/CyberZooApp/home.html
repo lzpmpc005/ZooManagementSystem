@@ -1,0 +1,36 @@
+{% extends 'main.html' %}
+
+{% load static %}
+
+{% block content %}
+    
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/home.css' %}">
+    
+<h1>Welcome to CyberZoo!</h1>
+
+{% if request.user.is_authenticated and request.user.is_superuser %}
+<a class="create-habitat-button" href="{% url 'create_habitat' %}">Create New Habitat</a>
+<a class="create-staff-button" href="{% url 'create_staff' %}">Add New Staff</a>
+{% endif %}
+    
+<div class="habitats-container">
+    {% for habitat in habitats %}
+    <div class="habitat-card">
+        <h2 class="habitat-name">{{ habitat.name }}</h2> 
+        <a href="{% url 'Habitat' habitat.name %}">
+            <img class="habitat-image" src="{{ habitat.image_url }}" alt="{{ habitat.name }}">
+        </a>
+        <div class="action-links">
+            {% if request.user.is_superuser %}
+            <a href="{% url 'delete_habitat' habitat.name %}">Delete</a>
+            {% endif %}
+            {% if request.user == habitat.manager.user or request.user.is_superuser %}
+            <a href="{% url 'update_habitat' habitat.name %}">Edit</a>
+            {% endif %}
+        </div>
+        <p>{{ habitat.description }}</p>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock content %}
