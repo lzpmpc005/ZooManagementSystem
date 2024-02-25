@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
 from .models import Habitat, Staff, Animal
-from .forms import HabitatForm, StaffForm
+from .forms import HabitatForm, StaffForm, AnimalForm
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -70,10 +70,62 @@ def home(request):
     return render(request, "CyberZooApp/home.html", context)
 
 
+def animals(request):
+    animal = Animal.objects.all().order_by('species')
+    print(animal)
+    context = {'animals': animal}
+    return render(request, "CyberZooApp/animals.html", context)
+
+def animal_detail(request, species):
+    animal = Animal.objects.get(species=species)
+    context = {'animal': animal}
+    return render(request, "CyberZooApp/animal_detail.html", context)
+
+@login_required(login_url='login')
+def create_animal(request):
+    if not request.user.is_superuser:
+        return HttpResponse('You are not allowed here!')
+    form = AnimalForm()
+    if request.method == 'POST':
+        form = AnimalForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+    context = {'form': form}
+    return render(request, "CyberZooApp/animal_form.html", context)
+
+@login_required(login_url='login')
+def update_animal(request, species):
+    if not request.user.is_superuser:
+        return HttpResponse('You are not allowed here!')
+    animal = Animal.objects.get(species=species)
+    print(animal)
+    form = AnimalForm(instance=animal)
+    if request.method == 'POST':
+        form = AnimalForm(request.POST, instance=animal)
+        if form.is_valid():
+            animal = form.save(commit=False)
+            animal.save()
+            return redirect('home')
+    else:
+        form = AnimalForm(instance=animal)
+    context = {'form': form}
+    return render(request, "CyberZooApp/animal_form.html", context)
+
+@login_required(login_url='login')
+def delete_animal(request, species):
+    if not request.user.is_superuser:
+        return HttpResponse('You are not allowed here!')
+    animal = Animal.objects.get(species=species)
+    if request.method == 'POST':
+        animal.delete()
+        return redirect('home')
+    return render(request, "CyberZooApp/delete.html", {'obj': animal})
+
 def habitat(request, name):
     habitat = Habitat.objects.get(name=name)
     animals = habitat.animal_set.all()
-    context = {'habitat': habitat}
+    context = {'habitat': habitat, 'animals': animals}
     return render(request, "CyberZooApp/Habitat.html", context)
 
 

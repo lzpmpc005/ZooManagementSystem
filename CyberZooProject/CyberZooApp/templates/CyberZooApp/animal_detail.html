@@ -1,0 +1,17 @@
+{% extends 'main.html' %} {% block content %}
+<h1>{{ animal.species }}</h1>
+<div>
+  <img
+    src="{{ animal.image_url }}"
+    alt="{{ animal.species }}"
+    width="200"
+    height="200"
+  />
+  <p>Behaviour: {{ animal.behavior }}</p>
+  <p>Diet: {{ animal.diet }}</p>
+  <p>{{ animal.species }} lives for {{ animal.lifespan }}</p>
+  <p>This animal lives in {{ animal.habitat }}</p>
+  <p>Caretaker: {{ animal.caretaker }}</p>
+</div>
+
+{% endblock %}

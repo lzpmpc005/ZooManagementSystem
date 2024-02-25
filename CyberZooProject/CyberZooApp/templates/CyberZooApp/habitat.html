@@ -1,21 +1,51 @@
-{% extends 'main.html' %}
-
-{% block content %}
+{% extends 'main.html' %} {% block content %}
+<div class="habitat-container">
+  <div class="habitat-image-container">
+  <img
+    src="{{ habitat.image_url }}"
+    alt="{{ habitat.name }}"
+  />
+  </div>
+  <div class="habitat-info">
     <h1>{{ habitat.name }}</h1>
-
     <p>{{ habitat.description }}</p>
+  </div>
+<div>
+  <hr />
+  <h3>Animals</h3>
 
-    <div class="comment-wrapper">
-        <hr>
-        <h3>Animals</h3>
-        
-            {% for animal in animals %}
-                <div>
-                <li>{{ animal.species }}</li>
-                <img src="{{ animal.image }}" alt="{{ animal.species }}" width="200" height="200">
+  {% if request.user.is_authenticated and request.user.is_superuser %}
+  <a class="create-animal-button" href="{% url 'create_animal' %}"
+    >Create New Animal</a
+  >
+  {% endif %}
 
-                </div>
-            {% endfor %}
+  <div class="animals-container" style="background-color: white">
+    {% for animal in animals %}
+    <a href="{% url 'Animal' animal.species %}">
+    <div class="animal-card">
+      <h2 class="animal-name">{{ animal.species }}</h2>
+      <img
+        src="{{ animal.image_url }}"
+        alt="{{ animal.species }}"
+        width="200"
+        height="200"
+      />
+      <p>{{ animal.description }}</p>
 
+      <div class="action-links">
+        {% if request.user.is_superuser %}
+          <a href="{% url 'delete_animal' animal.species %}">Delete</a>
+        {% endif %} 
+        {% if request.user == habitat.manager.user or request.user.is_superuser %}
+          <a href="{% url 'update_animal' animal.species %}">Edit</a>
+        {% endif %}
+      </div>
     </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+</div>
 {% endblock %}
