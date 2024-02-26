@@ -85,23 +85,23 @@ WSGI_APPLICATION = 'CyberZooProject.wsgi.application'
     # }
 # }
 
-DATABASES = {
-    "default": {
-        "ENGINE": "django.db.backends.postgresql_psycopg2",
-        "NAME": "CyberZoo",
-        "USER": "karina&li",
-        "PASSWORD": "karina&li",
-        "HOST": "localhost",
-        "PORT": "5432",
-    }
-}
-
 # DATABASES = {
-#     'default':{
-#         'ENGINE':'django.db.backends.sqlite3',
-#         'NAME':BASE_DIR/'db.sqlite3',
+#     "default": {
+#         "ENGINE": "django.db.backends.postgresql_psycopg2",
+#         "NAME": "CyberZoo",
+#         "USER": "karina&li",
+#         "PASSWORD": "karina&li",
+#         "HOST": "localhost",
+#         "PORT": "5432",
 #     }
 # }
+
+DATABASES = {
+    'default':{
+        'ENGINE':'django.db.backends.sqlite3',
+        'NAME':BASE_DIR/'db.sqlite3',
+    }
+}
 
 
 
