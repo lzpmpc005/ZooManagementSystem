@@ -1,0 +1,22 @@
+{% extends 'main.html' %} {% block content %}
+<div class="all-animals">
+  <h1>All Animals</h1>
+  <div class="animals-container">
+    {% for animal in animals %}
+    <div class="animal-card">
+      <li>{{ animal.species }}</li>
+      <img
+        src="{{ animal.image_url }}"
+        alt="{{ animal.species }}"
+        width="200"
+        height="200"
+      />
+      <p>{{ animal.habitat }}</p>
+      <p>{{ animal.description }}</p>
+      <a href="{% url 'Animal' animal.species %}">View Details</a>
+    </div>
+
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}

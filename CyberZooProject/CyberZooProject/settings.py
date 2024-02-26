@@ -74,6 +74,17 @@ WSGI_APPLICATION = 'CyberZooProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
+# DATABASES = {
+    # "default": {
+        # "ENGINE": "django.db.backends.postgresql_psycopg2",
+        # "NAME": "CyberZoo",
+        # "USER": "postgres",
+        # "PASSWORD": "123123",
+        # "HOST": "localhost",
+        # "PORT": "5433",
+    # }
+# }
+
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql_psycopg2",
@@ -84,6 +95,14 @@ DATABASES = {
         "PORT": "5432",
     }
 }
+
+# DATABASES = {
+#     'default':{
+#         'ENGINE':'django.db.backends.sqlite3',
+#         'NAME':BASE_DIR/'db.sqlite3',
+#     }
+# }
+
 
 
 # Password validation

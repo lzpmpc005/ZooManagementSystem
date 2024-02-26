@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Staff, Habitat
+from .models import Staff, Habitat, Animal
 from django.forms import ModelForm
 
 
@@ -30,4 +30,10 @@ class StaffForm(forms.ModelForm):
 class HabitatForm(ModelForm):
     class Meta:
         model = Habitat
+        fields = '__all__'
+
+
+class AnimalForm(ModelForm):
+    class Meta:
+        model = Animal
         fields = '__all__'
