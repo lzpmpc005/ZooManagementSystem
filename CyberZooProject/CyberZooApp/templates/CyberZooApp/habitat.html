@@ -14,7 +14,7 @@
   <hr />
   <h3>Animals</h3>
 
-  {% if request.user.is_authenticated and request.user.is_superuser %}
+  {% if request.user.is_authenticated and request.user.is_superuser or request.user == habitat.manager.user %}
   <a class="create-animal-button" href="{% url 'create_animal' %}"
     >Create New Animal</a
   >
@@ -34,7 +34,7 @@
       <p>{{ animal.description }}</p>
 
       <div class="action-links">
-        {% if request.user.is_superuser %}
+        {% if request.user.is_superuser or request.user == habitat.manager.user %}
           <a href="{% url 'delete_animal' animal.species %}">Delete</a>
         {% endif %} 
         {% if request.user == habitat.manager.user or request.user.is_superuser %}

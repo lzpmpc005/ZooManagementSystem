@@ -83,7 +83,8 @@ def animal_detail(request, species):
 
 @login_required(login_url='login')
 def create_animal(request):
-    if not request.user.is_superuser:
+    habitat = Habitat.objects.filter(manager__user=request.user).first()
+    if not request.user.is_superuser and not habitat:
         return HttpResponse('You are not allowed here!')
     form = AnimalForm()
     if request.method == 'POST':
@@ -96,11 +97,10 @@ def create_animal(request):
 
 @login_required(login_url='login')
 def update_animal(request, species):
-    if not request.user.is_superuser:
-        return HttpResponse('You are not allowed here!')
     animal = Animal.objects.get(species=species)
-    print(animal)
-    form = AnimalForm(instance=animal)
+    habitat_manager = animal.habitat.manager if animal.habitat.manager else None
+    if not request.user.is_superuser and request.user != habitat_manager.user:
+        return HttpResponse('You are not allowed here!')
     if request.method == 'POST':
         form = AnimalForm(request.POST, instance=animal)
         if form.is_valid():
@@ -114,13 +114,15 @@ def update_animal(request, species):
 
 @login_required(login_url='login')
 def delete_animal(request, species):
-    if not request.user.is_superuser:
-        return HttpResponse('You are not allowed here!')
     animal = Animal.objects.get(species=species)
+    habitat_manager = animal.habitat.manager if animal.habitat.manager else None
+    if not request.user.is_superuser and request.user != habitat_manager.user:
+        return HttpResponse('You are not allowed here!')
     if request.method == 'POST':
         animal.delete()
         return redirect('home')
     return render(request, "CyberZooApp/delete.html", {'obj': animal})
+
 
 def habitat(request, name):
     habitat = Habitat.objects.get(name=name)
