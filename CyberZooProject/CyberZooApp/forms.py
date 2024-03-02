@@ -11,7 +11,7 @@ class StaffForm(forms.ModelForm):
 
     class Meta:
         model = Staff
-        fields = ['qualification', 'responsibilities', 'status']
+        fields = ['qualification', 'status']
 
     def save(self, commit=True):
         user = User.objects.create_user(
