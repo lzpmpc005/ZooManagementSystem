@@ -1,19 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
 
-const HomePage = () => {
+import React, { useState, useEffect } from 'react';
+
+const HabitatsComponent = () => {
   const [habitats, setHabitats] = useState([]);
-  const [token, setToken] = useState('');
 
   useEffect(() => {
+
     const fetchHabitats = async () => {
       try {
-        // Replace 'your-authentication-token' with the actual authentication token
-        const response = await fetch('http://127.0.0.1:8000/api/habitats/', {
-          headers: {
-            'Authorization': `Token ${token}`,
-          },
-        });
+        const response = await fetch('http://127.0.0.1:8000/api/habitats/');
         if (!response.ok) {
           throw new Error('Failed to fetch habitats');
         }
@@ -24,25 +19,23 @@ const HomePage = () => {
       }
     };
 
-    fetchHabitats();
-  }, [token]); // Fetch habitats whenever the token changes
+    fetchHabitats(); 
+  }, []);
 
   return (
     <div>
-      <h1>Welcome to the Zoo!</h1>
-      <h2>Habitats</h2>
+      <h2>Welcome to the CyberZoo!</h2>
       <ul>
         {habitats.map(habitat => (
           <li key={habitat.id}>
             <h3>{habitat.name}</h3>
             <p>{habitat.description}</p>
-            {/* Link to staff page for each habitat */}
-            <Link to={`/staff/${habitat.manager.id}`}>Mine</Link>
+            <img src={habitat.image_url} alt={habitat.name} style={{ maxWidth: '300px' }} />
           </li>
         ))}
       </ul>
     </div>
   );
 };
-
-export default HomePage;
+   
+export default HabitatsComponent;

@@ -1,3 +1,4 @@
+import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from CyberZooApp.models import Animal, Habitat, Staff, Routine, Log, Prescription
@@ -5,6 +6,9 @@ from .serializers import HabitatSerializer, AnimalSerializer, RoutineSerializer,
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST, require_GET
+from django.views.decorators.csrf import csrf_exempt
 
 
 @api_view(['GET'])
@@ -57,37 +61,29 @@ def getStaffRoutines(request, pk):
     return Response(serializer.data)
 
 
-@api_view(['POST'])
+@csrf_exempt
+@require_POST
 def login_user(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
+    try:
+        data = json.loads(request.body)
+        username = data.get('username')
+        password = data.get('password')
+        if username is None or password is None:
+            return JsonResponse({'error': 'Please provide both username and password'}, status=400)
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({'detail': 'Login successful'})
+        else:
+            return JsonResponse({'error': 'Invalid username or password'}, status=400)
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid JSON format'}, status=400)
 
-    user = authenticate(request, username=username, password=password)
-    if user is not None:
-        login(request, user)
-        return Response({'detail': 'Login successful'})
-    else:
-        return Response({'error': 'Invalid username or password'}, status=400)
 
-
-@api_view(['POST'])
+@csrf_exempt
 def logout_user(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'You are not logged in'}, status=400)
     logout(request)
-    return Response({'detail': 'Logout successful'})
-
-
-@api_view(['POST'])
-def register_user(request):
-    username = request.data.get('username')
-    password = request.data.get('password')
-
-    if not username or not password:
-        return Response({'error': 'Username and password are required'}, status=400)
-
-    if User.objects.filter(username=username).exists():
-        return Response({'error': 'Username already exists'}, status=400)
-
-    user = User.objects.create_user(username=username, password=password)
-    login(request, user)
-    return Response({'detail': 'Registration successful'})
+    return JsonResponse({'detail': 'Logout successful'})
 

@@ -37,5 +37,5 @@ const HabitatsComponent = () => {
     </div>
   );
 };
-
+   
 export default HabitatsComponent;

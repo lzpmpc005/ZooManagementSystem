@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Staff, Habitat, Animal
+from .models import Staff, Habitat, Animal, Routine, Log, Prescription
 from django.forms import ModelForm
 
 
@@ -36,4 +36,16 @@ class HabitatForm(ModelForm):
 class AnimalForm(ModelForm):
     class Meta:
         model = Animal
+        fields = '__all__'
+
+
+class LogForm(ModelForm):
+    class Meta:
+        model = Log
+        fields = '__all__'
+
+
+class PrescriptionForm(ModelForm):
+    class Meta:
+        model = Prescription
         fields = '__all__'

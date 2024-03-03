@@ -53,6 +53,8 @@ class Animal(models.Model):
     PREGNANT = 'Pregnant'
     RECOVERING = 'Recovering'
     DECEASED = 'Deceased'
+    UNDEROBSERVATION = 'Under_Observation'
+    QUARANTINED = 'Quarantined'
 
     STATUS_CHOICES = [
         (FINE, 'Fine'),
@@ -61,16 +63,21 @@ class Animal(models.Model):
         (PREGNANT, 'Pregnant'),
         (RECOVERING, 'Recovering'),
         (DECEASED, 'Deceased'),
+        (UNDEROBSERVATION, 'Under_Observation'),
+        (QUARANTINED, 'Quarantined'),
     ]
 
-    status = models.CharField(
-        max_length=15,
+    status1 = models.CharField(
+        max_length=30,
         choices=STATUS_CHOICES,
         default=FINE,
     )
 
-    under_observation = models.BooleanField(default=False)
-    quarantined = models.BooleanField(default=False)
+    status2 = models.CharField(
+        max_length=30,
+        choices=STATUS_CHOICES,
+        default=FINE,
+    )
 
     def __str__(self):
         return self.species
@@ -111,7 +118,38 @@ class Log(models.Model):
     date = models.DateField(auto_now_add=True)
     time = models.TimeField(auto_now_add=True)
     action = models.CharField(max_length=100)
-    animal_status = models.CharField(max_length=100, null=True, blank=True)
+
+    FINE = 'Fine'
+    SICK = 'Sick'
+    INJURED = 'Injured'
+    PREGNANT = 'Pregnant'
+    RECOVERING = 'Recovering'
+    DECEASED = 'Deceased'
+    UNDEROBSERVATION = 'Under_Observation'
+    QUARANTINED = 'Quarantined'
+
+    STATUS_CHOICES = [
+        (FINE, 'Fine'),
+        (SICK, 'Sick'),
+        (INJURED, 'Injured'),
+        (PREGNANT, 'Pregnant'),
+        (RECOVERING, 'Recovering'),
+        (DECEASED, 'Deceased'),
+        (UNDEROBSERVATION, 'Under_Observation'),
+        (QUARANTINED, 'Quarantined'),
+    ]
+
+    animal_status1 = models.CharField(
+        max_length=30,
+        choices=STATUS_CHOICES,
+        default=FINE,
+    )
+
+    animal_status2 = models.CharField(
+        max_length=30,
+        choices=STATUS_CHOICES,
+        default=FINE,
+    )
 
     def __str__(self):
         return self.action

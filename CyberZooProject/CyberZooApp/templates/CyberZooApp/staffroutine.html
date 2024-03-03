@@ -1,0 +1,23 @@
+{% extends 'main.html' %} {% block content %}
+  <hr />
+    <a class="create-habitat-button" href="{% url 'report' %}">Report</a>
+  <h3>Tasks & Schedule</h3>
+
+  <div class="routines-container" style="background-color: white">
+    {% for routine in routines %}
+    <a href="{% url 'staffroutines' routine.Animal.id %}">
+    <div class="routine-card">
+      <h2 class="routine-name">{{ routine.Animal.species }}</h2>
+      <p>{{ routine.feeding_time }}</p>
+        <p>{{ routine.cleaning_time }}</p>
+        <p>{{ routine.examination_time }}</p>
+        <p>{{ routine.training_time }}</p>
+
+      </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+</div>
+{% endblock %}

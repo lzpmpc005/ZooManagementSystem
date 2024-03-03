@@ -7,7 +7,6 @@ urlpatterns = [
     path('habitats/<str:pk>/', views.getHabitat),
     path('staff/<str:pk>/animals', views.getStaffAnimals),
     path('staff/<str:pk>/routines', views.getStaffRoutines),
-    path('login/', views.login_user),
-    path('logout/', views.logout_user),
-    path('register/', views.register_user),
+    path('login/', views.login_user, name='login_api'),
+    path('logout/', views.logout_user, name='logout_api'),
 ]
