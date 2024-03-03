@@ -7,6 +7,7 @@ class Staff(models.Model):
     qualification = models.CharField(max_length=100)
     responsibilities = models.TextField(null=True, blank=True)
     status = models.CharField(max_length=100, null=True, blank=True)
+    email = models.EmailField(null=True, blank=True)
 
     def __str__(self):
         return self.user.username
@@ -37,3 +38,11 @@ class Animal(models.Model):
     def __str__(self):
         return self.species
 
+class CareRoutine(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    zookepeer = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    feeding_times = models.CharField(max_length=100)
+    medical_needs = models.TextField()
+
+    def __str__(self):
+        return self.animal.species

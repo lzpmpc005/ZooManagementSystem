@@ -1,0 +1,48 @@
+{% extends 'main.html' %} {% block content %}
+<div>
+  <h1>Animal Care Routines</h1>
+  <div>
+    {% if request.user.is_authenticated and request.user.is_superuser %}
+    <a class="create-animal-button" href="{% url 'create_careroutine' %}"
+      >Create New Care Routine</a
+    >
+    {% endif %}
+    <table class="table-striped">
+      <tr>
+        <th>Species</th>
+        <th>Zookeeper</th>
+        <th>Feeding Times</th>
+        <th>Medical Needs</th>
+        {% if request.user.is_authenticated and request.user.is_superuser %}
+        <th>Delete</th>
+        <th>Edit</th>
+        {% endif %}
+      </tr>
+      {% for care_routine in care_routines %}
+      <tr>
+        <td>{{ care_routine.animal.species }}</td>
+        <td>{{ care_routine.zookepeer }}</td>
+        <td>{{ care_routine.feeding_times }}</td>
+        <td>{{ care_routine.medical_needs }}</td>
+        {% if request.user.is_authenticated and request.user.is_superuser %}
+        <td>
+          <a
+            href="{% url 'delete_careroutine' care_routine.id %}"
+            class="delete"
+            >Delete</a
+          >
+        </td>
+        <td>
+          <a
+            href="{% url 'update_careroutine' care_routine.id %}"
+            class="update"
+            >Edit</a
+          >
+        </td>
+        {% endif %}
+      </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}
