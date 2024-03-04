@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './HabitatsComponent.css'; 
+import './AnimalComponent.css'; 
 
 
 const AnimalsComponent = () => {
@@ -14,7 +14,7 @@ const AnimalsComponent = () => {
           throw new Error('Failed to fetch animals');
         }
         const data = await response.json();
-        setHabitats(data);
+        setAnimals(data);
       } catch (error) {
         console.error('Error fetching animals:', error);
       }
@@ -25,11 +25,11 @@ const AnimalsComponent = () => {
 
   return (
     <div className="animals">
-      <h2>Check All Our Animals!</h2>
+      <h3>Check All Our Animals!</h3>
       <div className="animal-list">
         {animals.map(animal => (
           <div key={animal.id} className="animal-card">
-            <h3>{animal.name}</h3>
+            <h5>{animal.species}</h5>
             <img src={animal.image_url} alt={animal.species} />
             <p>{animal.behavior}</p>
           </div>
