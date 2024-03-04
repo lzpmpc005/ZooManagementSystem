@@ -1,7 +1,9 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .models import Habitat, Staff, Animal, Routine, Log, Prescription
-from .forms import HabitatForm, StaffForm, AnimalForm, LogForm, PrescriptionForm
+
+from .models import Habitat, Staff, Animal, Routine, Log, Prescription, CareRoutine
+from .forms import HabitatForm, StaffForm, AnimalForm, LogForm, PrescriptionForm, CareRoutineForm
+
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
@@ -225,6 +227,52 @@ def delete_staff(request, pk):
         return redirect('home')
     return render(request, "CyberZooApp/delete.html", {'obj': staff})
 
+@login_required(login_url='login')
+def create_care_routine(request):
+    if not request.user.is_superuser:
+        return HttpResponse('You are not allowed here!')
+    form = CareRoutineForm()
+    if request.method == 'POST':
+        form = CareRoutineForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('careroutine')
+    context = {'form': form}
+    return render(request, "CyberZooApp/care_routine_form.html", context)
+
+def care_routine_list(request):
+    care_routines = CareRoutine.objects.all()
+    context = {'care_routines': care_routines}
+    return render(request, "CyberZooApp/care_routine_list.html", context)
+
+def update_care_routine(request, pk):
+    if not request.user.is_superuser:
+        return HttpResponse('You are not allowed here!')
+    care_routine = CareRoutine.objects.get(id=pk)
+    form = CareRoutineForm(instance=care_routine)
+
+    if request.method == 'POST':
+        form = CareRoutineForm(request.POST, instance=care_routine)
+        if form.is_valid():
+            form.save()
+            return redirect('careroutine')
+    context = {'form': form}
+    return render(request, "CyberZooApp/care_routine_form.html", context)
+
+def delete_care_routine(request, pk):
+    if not request.user.is_superuser:
+        return HttpResponse('You are not allowed here!')
+    care_routine = CareRoutine.objects.get(id=pk)
+    if request.method == 'POST':
+        care_routine.delete()
+        return redirect('careroutine')
+    return render(request, "CyberZooApp/delete.html", {'obj': care_routine})
+    
+
+def staff_list(request):
+    staffs = Staff.objects.all()
+    context = {'staffs': staffs}
+    return render(request, "CyberZooApp/staff_list.html", context)
 
 @login_required(login_url='login')
 def staffAnimals(request, pk):

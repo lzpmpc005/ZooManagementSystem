@@ -7,7 +7,7 @@
     <title>CyberZoo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/habitat.css' %}">
-{#    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/main.css' %}">#}
+    <link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/main.css' %}">
 </head>
 <body>
 
@@ -21,8 +21,10 @@
     </ul>
     {% endif %}
 
+    <div class="content">
     {% block content %}
 
     {% endblock %}
+    </div>
 </body>
 </html>

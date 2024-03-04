@@ -83,6 +83,16 @@ class Animal(models.Model):
         return self.species
 
 
+class CareRoutine(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    zookepeer = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    feeding_times = models.CharField(max_length=100)
+    medical_needs = models.TextField()
+
+    def __str__(self):
+        return self.animal.species
+
+
 # modify Routine model if you need
 class Routine(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
@@ -153,3 +163,4 @@ class Log(models.Model):
 
     def __str__(self):
         return self.action
+

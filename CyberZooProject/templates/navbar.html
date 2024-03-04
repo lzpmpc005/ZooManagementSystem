@@ -7,9 +7,17 @@
         <img src="{% static 'images/logo.png' %}" alt="Logo" class="logo-img" />
         <h1>CyberZoo</h1>
     </a>
+
+    <div class="nav-links">
+        <a href="{% url 'Animals' %}">Animals</a>
+        <a href="{% url 'careroutine' %}">Care Routines</a>
+        <a href="{% url 'Staff' %}">Staff</a>
+    </div>
+
     <form method="GET" action="{% url 'home' %}" class="search-form">
         <input type="text" name="q" placeholder="Search Habitats"/>
     </form>
+    
     <div class="user-actions">
         {% if request.user.is_authenticated %}
             <p>Welcome, {{ request.user }} !</p>
