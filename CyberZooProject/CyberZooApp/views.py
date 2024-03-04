@@ -1,13 +1,16 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
-from .models import Habitat, Staff, Animal, CareRoutine
-from .forms import HabitatForm, StaffForm, AnimalForm, CareRoutineForm
+
+from .models import Habitat, Staff, Animal, Routine, Log, Prescription, CareRoutine
+from .forms import HabitatForm, StaffForm, AnimalForm, LogForm, PrescriptionForm, CareRoutineForm
+
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.contrib.auth.forms import UserCreationForm
+from django.core.mail import EmailMessage
 
 
 def loginUser(request):
@@ -271,3 +274,67 @@ def staff_list(request):
     context = {'staffs': staffs}
     return render(request, "CyberZooApp/staff_list.html", context)
 
+@login_required(login_url='login')
+def staffAnimals(request, pk):
+    animals = Animal.objects.filter(
+        Q(nutritionist__id=pk) |
+        Q(veterinarian__id=pk) |
+        Q(enricher__id=pk) |
+        Q(cleaner__id=pk)
+    )
+    context = {'animals': animals}
+    return render(request, "CyberZooApp/staffown.html", context)
+
+
+@login_required(login_url='login')
+def staffRoutines(request, pk):
+    staffAnimals = Animal.objects.filter(
+        Q(enricher_id=pk) | Q(cleaner_id=pk) |
+        Q(veterinarian_id=pk) | Q(nutritionist_id=pk)
+    )
+    routines = Routine.objects.filter(animal__in=staffAnimals)
+    context = {'routines': routines}
+    return render(request, "CyberZooApp/staffroutine.html", context)
+
+
+@login_required(login_url='login')
+def report(request):
+    form = LogForm()
+    if request.method == 'POST':
+        animal_status1 = request.POST.get('animal_status1')
+        animal_status2 = request.POST.get('animal_status2')
+        if animal_status1 != 'fine' or animal_status2 != 'Fine':
+            animal_id = request.POST.get('animal')
+            send_notification_email(animal_id, animal_status1, animal_status2)
+        form = LogForm(request.POST)
+        if form.is_valid():
+            try:
+                form.save()
+                return redirect('home')
+            except Exception as e:
+                print(f"An error occurred while saving the report: {e}")
+    context = {'form': form}
+    return render(request, "CyberZooApp/log_form.html", context)
+
+
+def send_notification_email(animal_id, animal_status1, animal_status2):
+    animal = Animal.objects.get(id=animal_id)
+    nutritionist_id = animal.nutritionist_id
+    veterinarian_id = animal.veterinarian_id
+    enricher_id = animal.enricher_id
+    cleaner_id = animal.cleaner_id
+    nutritionist = Staff.objects.get(id=nutritionist_id)
+    veterinarian = Staff.objects.get(id=veterinarian_id)
+    enricher = Staff.objects.get(id=enricher_id)
+    cleaner = Staff.objects.get(id=cleaner_id)
+    habitat = Habitat.objects.get(id=animal.habitat_id)
+    manager = Staff.objects.get(id=habitat.manager_id)
+
+    message = (f"Animal {animal.species} {animal.id} is reported {animal_status1} and {animal_status2}."
+               f"\nPlease take actions.")
+
+    subject = 'Animal Needs Attention!'
+    from_email = 'leipzig_traffic@outlook.com'
+    recipient_list = [nutritionist.user.email, veterinarian.user.email, enricher.user.email, cleaner.user.email, manager.user.email]
+    email = EmailMessage(subject, message, from_email, recipient_list)
+    email.send()

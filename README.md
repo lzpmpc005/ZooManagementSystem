@@ -127,10 +127,10 @@ python manage.py createsuperuser
 
 4. Manage Animals  
 (1) Login with administration/Manager account  
-(2) Enter the habitat
-(3) Create new animal  
-(4) Edit animal  
-(5) Delete animal
+(2) Enter the habitat    
+(3) Create new animal      
+(4) Edit animal    
+(5) Delete animal   
 
 > [!NOTE]
 > The manager of a habitat can edit the habitat, but can't see the create and delete button.   Normal user can't see the create, edit and delete button.

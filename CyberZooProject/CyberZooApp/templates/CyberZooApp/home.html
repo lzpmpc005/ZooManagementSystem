@@ -13,6 +13,17 @@
 <a class="create-staff-button" href="{% url 'create_staff' %}">Add New Staff</a>
 {% endif %}
 
+
+<a class="create-habitat-button" href="{% url 'Animals' %}">View All Animals</a>
+{% if request.user.is_authenticated %}
+    {% if request.user.staff %}
+            <a class="staff-self-page" href="{% url 'staffanimals' pk=user.staff.id %}">Self</a>
+    {% else %}
+        <a class="staff-self-page" href="{% url 'home' %}">Self</a>
+    {% endif %}
+{% endif %}
+
+
 <div class="habitats-container">
     {% for habitat in habitats %}
     <div class="habitat-card">
@@ -32,5 +43,5 @@
     </div>
     {% endfor %}
 </div>
-
+  
 {% endblock content %}

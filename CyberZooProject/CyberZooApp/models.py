@@ -4,16 +4,17 @@ from django.contrib.auth.models import User
 
 class Staff(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    # nutritionist, veterinarian, enricher, cleaner
     qualification = models.CharField(max_length=100)
-    responsibilities = models.TextField(null=True, blank=True)
-    status = models.CharField(max_length=100, null=True, blank=True)
-    email = models.EmailField(null=True, blank=True)
+    # delete responsibilities field because ForeignKey is used in Animal model
+    # status will be turned into "unavailable" when assigned to 10 animals
+    status = models.CharField(max_length=100, null=True, blank=True, default="available")
 
     def __str__(self):
         return self.user.username
 
 
-class Habitat(models.Model):
+class Habitat(models.Model):  # going to implement a map
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     size = models.IntegerField(null=True, blank=True)
@@ -32,11 +33,55 @@ class Animal(models.Model):
     lifespan = models.IntegerField(null=True, blank=True)
     behavior = models.TextField(null=True, blank=True)
     habitat = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True)
-    caretaker = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True)
+    # responsible for food
+    nutritionist = models.ForeignKey(Staff, on_delete=models.SET_NULL,
+                                     null=True, blank=True, related_name='animals_nurturing')
+    # responsible for physical health
+    veterinarian = models.ForeignKey(Staff, on_delete=models.SET_NULL,
+                                     null=True, blank=True, related_name='animals_caring')
+    # responsible for training/behavior/mental health
+    enricher = models.ForeignKey(Staff, on_delete=models.SET_NULL,
+                                 null=True, blank=True, related_name='animals_enriching')
+    # responsible for cleaning and facility maintenance
+    cleaner = models.ForeignKey(Staff, on_delete=models.SET_NULL,
+                                null=True, blank=True, related_name='animals_cleaning')
     image_url = models.CharField(max_length=200, null=True, blank=True)
+
+    FINE = 'Fine'
+    SICK = 'Sick'
+    INJURED = 'Injured'
+    PREGNANT = 'Pregnant'
+    RECOVERING = 'Recovering'
+    DECEASED = 'Deceased'
+    UNDEROBSERVATION = 'Under_Observation'
+    QUARANTINED = 'Quarantined'
+
+    STATUS_CHOICES = [
+        (FINE, 'Fine'),
+        (SICK, 'Sick'),
+        (INJURED, 'Injured'),
+        (PREGNANT, 'Pregnant'),
+        (RECOVERING, 'Recovering'),
+        (DECEASED, 'Deceased'),
+        (UNDEROBSERVATION, 'Under_Observation'),
+        (QUARANTINED, 'Quarantined'),
+    ]
+
+    status1 = models.CharField(
+        max_length=30,
+        choices=STATUS_CHOICES,
+        default=FINE,
+    )
+
+    status2 = models.CharField(
+        max_length=30,
+        choices=STATUS_CHOICES,
+        default=FINE,
+    )
 
     def __str__(self):
         return self.species
+
 
 class CareRoutine(models.Model):
     animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
@@ -46,3 +91,76 @@ class CareRoutine(models.Model):
 
     def __str__(self):
         return self.animal.species
+
+
+# modify Routine model if you need
+class Routine(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    feeding_time = models.TimeField(null=True, blank=True)
+    diet_plan = models.CharField(max_length=100, null=True, blank=True)
+    cleaning_time = models.TimeField(null=True, blank=True)
+    training_time = models.TimeField(null=True, blank=True)
+    examination_date = models.DateField(null=True, blank=True)
+    examination_time = models.TimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.feeding_time
+
+
+# When a prescription is added, animal's status will be updated
+# All related staff will be notified, then they will modify animal's routine accordingly
+class Prescription(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    health_condition = models.CharField(max_length=100, default=None)
+    medical_needs = models.CharField(max_length=100, default=None)
+    medication = models.CharField(max_length=100, default=None)
+    dosage = models.CharField(max_length=100, default=None)
+    duration = models.CharField(max_length=100, default=None)
+    diet_suggestion = models.CharField(max_length=100, default=None)
+
+    def __str__(self):
+        return self.medication
+
+
+class Log(models.Model):
+    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    staff = models.ForeignKey(Staff, on_delete=models.CASCADE)
+    date = models.DateField(auto_now_add=True)
+    time = models.TimeField(auto_now_add=True)
+    action = models.CharField(max_length=100)
+
+    FINE = 'Fine'
+    SICK = 'Sick'
+    INJURED = 'Injured'
+    PREGNANT = 'Pregnant'
+    RECOVERING = 'Recovering'
+    DECEASED = 'Deceased'
+    UNDEROBSERVATION = 'Under_Observation'
+    QUARANTINED = 'Quarantined'
+
+    STATUS_CHOICES = [
+        (FINE, 'Fine'),
+        (SICK, 'Sick'),
+        (INJURED, 'Injured'),
+        (PREGNANT, 'Pregnant'),
+        (RECOVERING, 'Recovering'),
+        (DECEASED, 'Deceased'),
+        (UNDEROBSERVATION, 'Under_Observation'),
+        (QUARANTINED, 'Quarantined'),
+    ]
+
+    animal_status1 = models.CharField(
+        max_length=30,
+        choices=STATUS_CHOICES,
+        default=FINE,
+    )
+
+    animal_status2 = models.CharField(
+        max_length=30,
+        choices=STATUS_CHOICES,
+        default=FINE,
+    )
+
+    def __str__(self):
+        return self.action
+

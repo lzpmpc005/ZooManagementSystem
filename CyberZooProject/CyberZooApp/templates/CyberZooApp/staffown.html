@@ -1,0 +1,40 @@
+{% extends 'main.html' %} {% block content %}
+<div class="animal-container">
+  <div class="animal-image-container">
+  <img
+    src="{{ animal.image_url }}"
+    alt="{{ animal.species }}"
+  />
+  </div>
+  <div class="animal-info">
+    <h1>{{ animal.species }}</h1>
+    <p>{{ animal.behavior }}</p>
+  </div>
+<div>
+  <hr />
+  <h3>Assigned Animals</h3>
+
+{% if request.user.staff %}
+    <a class="staff-routine-page" href="{% url 'staffroutines' pk=user.staff.id %}">Daily Tasks</a>
+{% endif %}
+
+  <div class="animals-container" style="background-color: white">
+    {% for animal in animals %}
+    <a href="{% url 'Animal' animal.species %}">
+    <div class="animal-card">
+      <h2 class="animal-name">{{ animal.species }}</h2>
+      <img
+        src="{{ animal.image_url }}"
+        alt="{{ animal.species }}"
+        width="200"
+        height="200"
+      />
+      <p>{{ animal.description }}</p>
+    </div>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+
+</div>
+{% endblock %}

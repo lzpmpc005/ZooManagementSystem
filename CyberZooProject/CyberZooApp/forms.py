@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
-from .models import Staff, Habitat, Animal, CareRoutine
+
+from .models import Staff, Habitat, Animal, Routine, Log, Prescription, CareRoutine
+
 from django.forms import ModelForm
 
 
@@ -11,7 +13,9 @@ class StaffForm(forms.ModelForm):
 
     class Meta:
         model = Staff
-        fields = ['qualification', 'responsibilities', 'status', 'email']
+        fields = ['qualification', 'status']
+
+
 
     def save(self, commit=True):
         ifExists = Staff.objects.filter(user__username=self.cleaned_data['username'])
@@ -22,7 +26,6 @@ class StaffForm(forms.ModelForm):
             user.save()
 
             staff = super().save(commit=False)
-            print(staff)
             staff.user = user
             if commit:
                 staff.save()
@@ -52,7 +55,20 @@ class AnimalForm(ModelForm):
         model = Animal
         fields = '__all__'
 
+
 class CareRoutineForm(ModelForm):
     class Meta:
         model = CareRoutine
+        fields = '__all__'
+
+
+class LogForm(ModelForm):
+    class Meta:
+        model = Log
+        fields = '__all__'
+
+
+class PrescriptionForm(ModelForm):
+    class Meta:
+        model = Prescription
         fields = '__all__'

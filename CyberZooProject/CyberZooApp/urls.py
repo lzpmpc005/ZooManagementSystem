@@ -26,9 +26,15 @@ urlpatterns = [
     path('update_animal/<str:species>', views.update_animal, name='update_animal'),
     path('delete_animal/<str:species>', views.delete_animal, name='delete_animal'),
 
+
     #CRUD for CareRoutine
     path('create_careroutine/', views.create_care_routine, name='create_careroutine'),
     path('careroutine/', views.care_routine_list, name='careroutine'),
     path('update_careroutine/<int:pk>', views.update_care_routine, name='update_careroutine'),
     path('delete_careroutine/<int:pk>', views.delete_care_routine, name='delete_careroutine'),
+
+    path('staff/<int:pk>/animals', views.staffAnimals, name='staffanimals'),
+    path('staff/<int:pk>/routine', views.staffRoutines, name='staffroutines'),
+    path('staff/report', views.report, name='report'),
+
 ]
