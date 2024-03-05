@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.db.models import Q
 
-from .models import Habitat, Staff, Animal, Routine, Log, Prescription, CareRoutine
+from .models import Habitat, Staff, Animal, Routine, Log, Prescription
 from .forms import HabitatForm, StaffForm, AnimalForm, LogForm, PrescriptionForm, CareRoutineForm
 
 from django.contrib.auth.models import User
@@ -81,7 +81,10 @@ def animals(request):
 
 def animal_detail(request, species):
     animal = Animal.objects.get(species=species)
-    context = {'animal': animal}
+    prescription = Prescription.objects.filter(animal=animal).first()
+    routine = Routine.objects.get(animal=animal)
+    logs = Log.objects.filter(animal=animal).order_by('-date', '-time')
+    context = {'animal': animal, 'prescription': prescription, 'routine': routine, 'logs': logs}
     return render(request, "CyberZooApp/animal_detail.html", context)
 
 @login_required(login_url='login')
@@ -206,13 +209,18 @@ def update_staff(request, pk):
     if not request.user.is_superuser:
         return HttpResponse('You are not allowed here!')
     staff = Staff.objects.get(id=pk)
-    form = StaffForm(instance=staff)
+    user = staff.user
+    user_data = {
+        'username': user.username,
+        'email': user.email,
+    }
+    form = StaffForm(request.POST or None, instance=staff, initial=user_data)
 
     if request.method == 'POST':
         form = StaffForm(request.POST, instance=staff)
         if form.is_valid():
             form.save()
-            return redirect('home')
+            return redirect('Staff')
     context = {'form': form}
     return render(request, "CyberZooApp/staff_form.html", context)
 
@@ -229,11 +237,16 @@ def delete_staff(request, pk):
 
 @login_required(login_url='login')
 def create_care_routine(request):
-    if not request.user.is_superuser:
+    if not request.user.staff:
         return HttpResponse('You are not allowed here!')
-    form = CareRoutineForm()
+    # animals and routine is OneToOne relationship,
+    # only create routine for animals without routine
+    animals_without_routine = Animal.objects.filter(routine=None)
+    if animals_without_routine.count() == 0:
+        return HttpResponse('No Animals Without Routine Found! Please Update Current Routines.')
+    form = CareRoutineForm(animals=animals_without_routine)
     if request.method == 'POST':
-        form = CareRoutineForm(request.POST)
+        form = CareRoutineForm(request.POST, animals=animals_without_routine)
         if form.is_valid():
             form.save()
             return redirect('careroutine')
@@ -241,14 +254,14 @@ def create_care_routine(request):
     return render(request, "CyberZooApp/care_routine_form.html", context)
 
 def care_routine_list(request):
-    care_routines = CareRoutine.objects.all()
+    care_routines = Routine.objects.all()
     context = {'care_routines': care_routines}
     return render(request, "CyberZooApp/care_routine_list.html", context)
 
 def update_care_routine(request, pk):
-    if not request.user.is_superuser:
+    if not request.user.staff:
         return HttpResponse('You are not allowed here!')
-    care_routine = CareRoutine.objects.get(id=pk)
+    care_routine = Routine.objects.get(id=pk)
     form = CareRoutineForm(instance=care_routine)
 
     if request.method == 'POST':
@@ -259,15 +272,15 @@ def update_care_routine(request, pk):
     context = {'form': form}
     return render(request, "CyberZooApp/care_routine_form.html", context)
 
-def delete_care_routine(request, pk):
-    if not request.user.is_superuser:
-        return HttpResponse('You are not allowed here!')
-    care_routine = CareRoutine.objects.get(id=pk)
-    if request.method == 'POST':
-        care_routine.delete()
-        return redirect('careroutine')
-    return render(request, "CyberZooApp/delete.html", {'obj': care_routine})
-    
+# def delete_care_routine(request, pk):
+#     if not request.user.is_superuser:
+#         return HttpResponse('You are not allowed here!')
+#     care_routine = CareRoutine.objects.get(id=pk)
+#     if request.method == 'POST':
+#         care_routine.delete()
+#         return redirect('careroutine')
+#     return render(request, "CyberZooApp/delete.html", {'obj': care_routine})
+#
 
 def staff_list(request):
     staffs = Staff.objects.all()
@@ -292,32 +305,70 @@ def staffRoutines(request, pk):
         Q(enricher_id=pk) | Q(cleaner_id=pk) |
         Q(veterinarian_id=pk) | Q(nutritionist_id=pk)
     )
-    routines = Routine.objects.filter(animal__in=staffAnimals)
-    context = {'routines': routines}
-    return render(request, "CyberZooApp/staffroutine.html", context)
+    care_routines = Routine.objects.filter(animal__in=staffAnimals)
+    context = {'care_routines': care_routines}
+    return render(request, "CyberZooApp/staff_routine.html", context)
 
 
 @login_required(login_url='login')
-def report(request):
-    form = LogForm()
+def createReport(request, pk):
+    animals = Animal.objects.filter(
+        Q(nutritionist__id=pk) |
+        Q(veterinarian__id=pk) |
+        Q(enricher__id=pk) |
+        Q(cleaner__id=pk)
+    )
+    form = LogForm(animals=animals)
     if request.method == 'POST':
         animal_status1 = request.POST.get('animal_status1')
         animal_status2 = request.POST.get('animal_status2')
         if animal_status1 != 'fine' or animal_status2 != 'Fine':
             animal_id = request.POST.get('animal')
-            send_notification_email(animal_id, animal_status1, animal_status2)
-        form = LogForm(request.POST)
+            # send_notification_email(animal_id, animal_status1, animal_status2)
+        form = LogForm(request.POST, animals=animals)
         if form.is_valid():
             try:
+                staff = Staff.objects.get(id=pk)
+                form.instance.staff = staff
                 form.save()
-                return redirect('home')
+                triger = 'report'
+                send_notification_email(animal_id, triger)
+                return redirect('staffanimals', pk=pk)
             except Exception as e:
                 print(f"An error occurred while saving the report: {e}")
     context = {'form': form}
     return render(request, "CyberZooApp/log_form.html", context)
 
 
-def send_notification_email(animal_id, animal_status1, animal_status2):
+def getReports(request):
+    if request.user.is_superuser:
+        logs = Log.objects.all().order_by('-date', '-time')
+    elif request.user.staff.role == 'Manager':
+        habitat = Habitat.objects.get(manager_id=request.user.staff.id)
+        animals = Animal.objects.filter(habitat=habitat)
+        logs = Log.objects.filter(animal__in=animals).order_by('-date', '-time')
+    else:
+        return HttpResponse('You are not allowed here!')
+    context = {'logs': logs}
+    return render(request, "CyberZooApp/report_list.html", context)
+
+
+@login_required(login_url='login')
+def createPrescription(request, pk):
+    form = PrescriptionForm()
+    if request.method == 'POST':
+        form = PrescriptionForm(request.POST)
+        if form.is_valid():
+            form.save()
+            animal_id = form.cleaned_data['animal'].id
+            triger = 'prescription'
+            send_notification_email(animal_id, triger)
+            return redirect('staffanimals', pk=pk)
+    context = {'form': form}
+    return render(request, "CyberZooApp/prescription_form.html", context)
+
+
+def send_notification_email(animal_id, triger):
     animal = Animal.objects.get(id=animal_id)
     nutritionist_id = animal.nutritionist_id
     veterinarian_id = animal.veterinarian_id
@@ -330,8 +381,11 @@ def send_notification_email(animal_id, animal_status1, animal_status2):
     habitat = Habitat.objects.get(id=animal.habitat_id)
     manager = Staff.objects.get(id=habitat.manager_id)
 
-    message = (f"Animal {animal.species} {animal.id} is reported {animal_status1} and {animal_status2}."
-               f"\nPlease take actions.")
+    if triger == 'prescription':
+        message = f"Animal {animal.species} {animal.id} has a new prescription. Please take actions."
+    elif triger == 'report':
+        message = (f"Animal {animal.species} {animal.id} is reported {animal.status1} and {animal.status2}."
+                   f"\nPlease take actions.")
 
     subject = 'Animal Needs Attention!'
     from_email = 'leipzig_traffic@outlook.com'

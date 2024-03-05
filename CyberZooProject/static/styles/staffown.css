@@ -1,0 +1,46 @@
+.staff-routine-button,
+.staff-report-button,
+.prescription-button {
+  display: inline-block;
+  margin: 1px;
+  padding: 10px 20px;
+  text-decoration: none;
+  color: white;
+  background-color: #0040b4;
+  border-radius: 5px;
+}
+
+.staff-routine-button:hover,
+.staff-report-button:hover,
+.prescription-button:hover {
+  background-color: #0056b3;
+}
+
+.animals-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 20px;
+}
+
+.animal-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 10px;
+  background-color: #f9f9f9; /* Light gray background color */
+  transition: transform 0.3s ease; /* Add smooth hover effect */
+}
+
+.animal-card:hover {
+  transform: translateY(-5px); /* Lift the card slightly on hover */
+}
+
+.animal-card img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 5px;
+}
+
+.animal-card p {
+  font-size: 14px;
+  margin-top: 5px;
+}

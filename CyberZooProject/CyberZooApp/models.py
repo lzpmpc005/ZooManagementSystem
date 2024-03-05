@@ -10,6 +10,28 @@ class Staff(models.Model):
     # status will be turned into "unavailable" when assigned to 10 animals
     status = models.CharField(max_length=100, null=True, blank=True, default="available")
 
+    MANAGER = 'Manager'
+    NUTRITIONIST = 'Nutritionist'
+    VETERINARIAN = 'Veterinarian'
+    ENRICHER = 'Enricher'
+    CLEANER = 'Cleaner'
+    UNDECIDED = 'Undecided'
+
+    ROLE_CHOICES = [
+        (MANAGER, 'Manager'),
+        (NUTRITIONIST, 'Nutritionist'),
+        (VETERINARIAN, 'Veterinarian'),
+        (ENRICHER, 'Enricher'),
+        (CLEANER, 'Cleaner'),
+        (UNDECIDED, 'Undecided'),
+    ]
+
+    role = models.CharField(
+        max_length=30,
+        choices=ROLE_CHOICES,
+        default=UNDECIDED
+    )
+
     def __str__(self):
         return self.user.username
 
@@ -83,19 +105,19 @@ class Animal(models.Model):
         return self.species
 
 
-class CareRoutine(models.Model):
-    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
-    zookepeer = models.ForeignKey(Staff, on_delete=models.CASCADE)
-    feeding_times = models.CharField(max_length=100)
-    medical_needs = models.TextField()
-
-    def __str__(self):
-        return self.animal.species
+# class CareRoutine(models.Model):
+#     animal = models.OneToOneField(Animal, on_delete=models.CASCADE)
+#     zookepeer = models.ForeignKey(Staff, on_delete=models.CASCADE)
+#     feeding_times = models.CharField(max_length=100)
+#     medical_needs = models.TextField()
+#
+#     def __str__(self):
+#         return self.animal.species
 
 
 # modify Routine model if you need
 class Routine(models.Model):
-    animal = models.ForeignKey(Animal, on_delete=models.CASCADE)
+    animal = models.OneToOneField(Animal, on_delete=models.CASCADE)
     feeding_time = models.TimeField(null=True, blank=True)
     diet_plan = models.CharField(max_length=100, null=True, blank=True)
     cleaning_time = models.TimeField(null=True, blank=True)
@@ -117,6 +139,7 @@ class Prescription(models.Model):
     dosage = models.CharField(max_length=100, default=None)
     duration = models.CharField(max_length=100, default=None)
     diet_suggestion = models.CharField(max_length=100, default=None)
+    date = models.DateField(auto_now_add=True)
 
     def __str__(self):
         return self.medication
@@ -163,4 +186,3 @@ class Log(models.Model):
 
     def __str__(self):
         return self.action
-

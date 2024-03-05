@@ -1,40 +1,40 @@
-{% extends 'main.html' %} {% block content %}
+{% extends 'main.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/staffown.css' %}">
+    
 <div class="animal-container">
   <div class="animal-image-container">
-  <img
-    src="{{ animal.image_url }}"
-    alt="{{ animal.species }}"
-  />
+    <img src="{{ animal.image_url }}" alt="{{ animal.species }}" />
   </div>
   <div class="animal-info">
     <h1>{{ animal.species }}</h1>
     <p>{{ animal.behavior }}</p>
   </div>
-<div>
+
+  {% if request.user.staff %}
+    <a class="staff-routine-button" href="{% url 'staffRoutines' pk=user.staff.id %}">Tasks</a>
+    <a class="staff-report-button" href="{% url 'createReport' pk=user.staff.id%}">Report</a>
+    {% if request.user.staff.id == animals.0.veterinarian_id %}
+        <a class="prescription-button" href="{% url 'createPrescription' pk=user.staff.id %}">Prescription</a>
+    {% endif %}
+  {% endif %}
+
   <hr />
   <h3>Assigned Animals</h3>
 
-{% if request.user.staff %}
-    <a class="staff-routine-page" href="{% url 'staffroutines' pk=user.staff.id %}">Daily Tasks</a>
-{% endif %}
-
-  <div class="animals-container" style="background-color: white">
+  <div class="animals-container">
     {% for animal in animals %}
-    <a href="{% url 'Animal' animal.species %}">
-    <div class="animal-card">
-      <h2 class="animal-name">{{ animal.species }}</h2>
-      <img
-        src="{{ animal.image_url }}"
-        alt="{{ animal.species }}"
-        width="200"
-        height="200"
-      />
-      <p>{{ animal.description }}</p>
-    </div>
-    </a>
+      <a href="{% url 'Animal' animal.species %}">
+        <div class="animal-card">
+          <h3 class="animal-name">{{ animal.species }}</h3>
+          <img src="{{ animal.image_url }}" alt="{{ animal.species }}" width="200" height="130" />
+          <p>{{ animal.status1 }}</p>
+          <p>{{ animal.status2 }}</p>
+        </div>
+      </a>
     {% endfor %}
   </div>
 </div>
 
-</div>
 {% endblock %}

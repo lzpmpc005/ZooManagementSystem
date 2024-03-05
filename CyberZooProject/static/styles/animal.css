@@ -1,0 +1,47 @@
+
+.all-animals {
+  margin: 20px auto;
+  max-width: 1000px;
+  padding-left: 10px;
+  padding-right: 10px;
+}
+
+.animals-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.animal-card {
+  flex-basis: calc(20% - 20px);
+  margin-bottom: 2px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  padding: 10px;
+}
+
+.animal-image {
+  margin: 0 auto 10px;
+}
+
+.animal-details {
+  text-align: center;
+}
+
+.animal-details h2 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.animal-details p {
+  margin: 5px 0;
+}
+
+.animal-details a {
+  text-decoration: none;
+  color: blue;
+}
+
+.animal-details a:hover {
+  text-decoration: underline;
+}
