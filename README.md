@@ -7,6 +7,7 @@ Digital zoo management system developed with Django and PostgreSQL
 - [Introduction](#introduction)
 - [Requirements](#requirements)
 - [Installation and Run](#install)
+  - [Install Node.js](#node.js)
   - [Install PostgreSQL](#postgreSQL)
   - [Clone the repository and Run](#run)
 - [Features](#Features)
@@ -23,25 +24,41 @@ This project is a web application for zoo management, developed with Django and 
 - manage habitats
 - manage staff member
 - manage animals
+- manage animal routine
+- track and log staff activity
 
 
 ## Requirements[![](https://raw.githubusercontent.com/aregtech/areg-sdk/master/docs/img/pin.svg)](#requirements)
  
  To perfectly use all the features, you need to install the following dependencies or follow the instructions in Installation and Run.
+ ### Django Backend Server
+ - asgiref==3.7.2
+ - Django==5.0.2
+ - django-cors-headers==4.3.1
+ - djangorestframework==3.14.0
+ - psycopg2==2.9.9
+ - pytz==2024.1
+ - setuptools==68.2.2
+ - sqlparse==0.4.4
+ - tzdata==2024.1
+ - wheel==0.41.2
 
-- asgiref==3.7.2
-- Django==5.0.2
-- psycopg2==2.9.9
-- setuptools==68.2.2
-- sqlparse==0.4.4
-- tzdata==2024.1
-- wheel==0.41.2
+ ### React Frontend Server
+ - node.js
+ - npm install universal-cookie
+ - npm install axios
+ - npm install react-bootstrap bootstrap
 
 ---
 
 ## Installation and Run(#install)
 
-### I. Install PostgreSQL (#postgreSQL)
+### I. Install Node.js (#node.js)
+
+Please refer to   
+ https://nodejs.org/en
+
+### II. Install PostgreSQL (#postgreSQL)
 
 Please refer to   
  https://www.postgresqltutorial.com/postgresql-getting-started/install-postgresql/
@@ -49,12 +66,12 @@ Please refer to
 Once installed, you can use the respective client tools to connect to the PostgreSQL database.
 
 
-### II. Clone the repository and Run(#run)
+### III. Clone the repository and Run(#run)
 
 ```bash
 git clone https://github.com/lzpmpc005/ZooManagementSystem.git
 ```
-
+#### i. Django Backend Server
 1. Navigate to the repository
 ```bash
 cd ZooManagementSystem
@@ -111,6 +128,24 @@ python manage.py createsuperuser
 > [!NOTE]
 > Remember this username and password, because some operations can only be perfromed when login as administration.
 
+#### ii. React Frontend Server
+
+1. Navigate to the project
+```bash
+cd CyberZooFrontend
+```
+2. Install dependencies using npm:
+```bash
+ npm install universal-cookie
+ npm install axios
+ npm install react-bootstrap bootstra
+```
+
+3. Start frontend server:
+```bash
+ npm run dev
+```
+
 ## Features[![](https://raw.githubusercontent.com/aregtech/areg-sdk/master/docs/img/pin.svg)](#Features)
 1. Normal user can view public contents, sign up, login, logout
 
@@ -134,6 +169,37 @@ python manage.py createsuperuser
 
 > [!NOTE]
 > The manager of a habitat can edit the habitat, but can't see the create and delete button.   Normal user can't see the create, edit and delete button.
+
+5. Manage Routine  
+(1) Login with administration/Staff account  
+(2) Check All Routines    
+(3) Check Routine in Animal detail      
+(4) Update Routine  
+
+6. Routine Notification   
+   (1) Start Notification Module
+   ```bash
+   python manage.py reminder
+   ``` 
+   (2) When the system detect an overdue routine, it will send email to the staff and manager (or not, depends on the time passed due)
+
+7. Check Assigned Animals and Tasks  
+(1) Login with Staff account  
+(2) Check all animals assigned to you in "self" page  
+(3) Check assigned Tasks      
+
+8. Report and Prescription  
+(1) Report Activity and animal condition  
+(2) Take actions according to notification  
+(3) Veterinarian can create prescription for an animal when necessary
+(4) Staffs who are responsible for the animal will receive notification and they can update the animal routine accordingly 
+
+9. Check Staff Activities History  
+(1) Login with administration/Manager account
+(2) Go to "Self" page
+(3) Admin will see all the activities history
+(4) Manager will see the history in his/her habitat.
+
 
 > 💡 xxx [xxx] (To be continue). 
 

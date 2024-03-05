@@ -1,6 +1,6 @@
 {% extends 'main.html' %} {% block content %}
 <div>
-  <h1>Animal Care Routines</h1>
+  <h1>Assigned Animal Routines</h1>
   <div>
     {% if request.user.is_authenticated and request.user.staff %}
     <a class="create-animal-button" href="{% url 'create_careroutine' %}"
@@ -11,12 +11,22 @@
       <tr>
         <th>ID</th>
         <th>Species</th>
+        {% if request.user.is_authenticated and request.user.staff and care_routines %}
+        {% if request.user.staff.id == care_routines.0.animal.nutritionist_id %}
         <th>Feeding Time</th>
         <th>Diet Plan</th>
+        {% endif %}
+        {% if request.user.staff.id == care_routines.0.animal.enricher_id %}
         <th>Training Time</th>
+        {% endif %}
+        {% if request.user.staff.id == care_routines.0.animal.cleaner_id %}
         <th>Cleaning Time</th>
+        {% endif %}
+        {% if request.user.staff.id == care_routines.0.animal.veterinarian_id %}
         <th>Examination Date</th>
         <th>Examination Time</th>
+        {% endif %}
+        {% endif %}
         {% if request.user.is_authenticated and request.user.staff %}
         <th>Update</th>
         {% endif %}
@@ -24,15 +34,21 @@
       {% for care_routine in care_routines %}
       <tr>
         <td>{{ care_routine.animal_id }}</td>
-        <td>{{ care_routine.animal.species}}</td>
+        <td>{{ care_routine.animal.species }}</td>
+        {% if request.user.is_authenticated and request.user.staff %}
+        {% if request.user.staff.id == care_routine.animal.nutritionist_id %}
         <td>{{ care_routine.feeding_time }}</td>
         <td>{{ care_routine.diet_plan }}</td>
+        {% elif request.user.staff.id == care_routine.animal.enricher_id %}
         <td>{{ care_routine.training_time }}</td>
+        {% elif request.user.staff.id == care_routine.animal.cleaner_id %}
         <td>{{ care_routine.cleaning_time }}</td>
+        {% elif request.user.staff.id == care_routine.animal.veterinarian_id %}
         <td>{{ care_routine.examination_date }}</td>
         <td>{{ care_routine.examination_time }}</td>
+        {% endif %}
+        {% endif %}
         {% if request.user.is_authenticated and request.user.staff %}
-        
         <td>
           <a
             href="{% url 'update_careroutine' care_routine.id %}"

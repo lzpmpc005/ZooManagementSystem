@@ -1,0 +1,29 @@
+{% extends 'main.html' %} {% block content %}
+<div>
+  <h1>Activity Reports</h1>
+
+  <table class="table-striped">
+    <tr>
+      <th>Animal ID</th>
+      <th>Staff ID</th>
+      <th>Action</th>
+      <th>Date</th>
+      <th>Time</th>
+      <th>Animal Status1</th>
+      <th>Animal Status2</th>
+    </tr>
+    {% for log in logs %}
+    <tr>
+      <td>{{ log.animal_id }}</td>
+      <td>{{ log.staff_id }}</td>
+      <td>{{ log.action }}</td>
+      <td>{{ log.date }}</td>
+        <td>{{ log.time }}</td>
+        <td>{{ log.animal_status1 }}</td>
+        <td>{{ log.animal_status2 }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+</div>
+
+{% endblock %}

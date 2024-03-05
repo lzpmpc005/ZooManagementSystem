@@ -1,18 +1,111 @@
-{% extends 'main.html' %} {% block content %}
-<h1>{{ animal.species }}</h1>
-<div>
-  <img
-    src="{{ animal.image_url }}"
-    alt="{{ animal.species }}"
-    width="200"
-    height="200"
-  />
-  <p>Behaviour: {{ animal.behavior }}</p>
-  <p>Diet: {{ animal.diet }}</p>
-  <p>{{ animal.species }} lives for {{ animal.lifespan }}</p>
-  <p>This animal lives in {{ animal.habitat }}</p>
-  <p>Nurtritionist: {{ animal.nutritionist }}</p>
-    <p>Enricher: {{ animal.enricher }}</p>
+{% extends 'main.html' %} 
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" media="screen" href="{% static 'styles/animal_detail.css' %}">
+    
+<div class="grid-container">
+    <div class="grid-item animal-details">
+        <h1>{{ animal.species }}</h1>
+        <div>
+            <img
+                src="{{ animal.image_url }}"
+                alt="{{ animal.species }}"
+                width="200"
+                height="200"
+            />
+            <p>Behaviour: {{ animal.behavior }}</p>
+            <p>Diet: {{ animal.diet }}</p>
+            <p>{{ animal.species }} lives for {{ animal.lifespan }}</p>
+            <p>This animal lives in {{ animal.habitat }}</p>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <h2>Recent Activities</h2>
+        <div>
+            <table class="table-striped">
+            <tr>
+              <th>Action</th>
+              <th>Date</th>
+              <th>Time</th>
+              <th>Status</th>
+
+            </tr>
+            {% for log in logs %}
+            <tr>
+              <td>{{ log.action }}</td>
+              <td>{{ log.date }}</td>
+                <td>{{ log.time }}</td>
+                <td>{{ log.animal_status1 }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+    </div>
+    
+    <div class="grid-item">
+        <h2>Routine</h2>
+        <div>
+            <table class="table-striped">
+                <tr>
+                    <th>Eat</th>
+                    <td>{{ routine.feeding_time }}</td>
+                </tr>
+                <tr>
+                    <th>Diet Plan</th>
+                    <td>{{ routine.diet_plan }}</td>
+                </tr>
+                <tr>
+                    <th>Train</th>
+                    <td>{{ routine.training_time }}</td>
+                </tr>
+                <tr>
+                    <th>Clean</th>
+                    <td>{{ routine.cleaning_time }}</td>
+                </tr>
+                <tr>
+                    <th>Exam</th>
+                    <td>{{ routine.examination_date }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="grid-item">
+        <h2>Latest Prescription</h2>
+        <div>
+            <table class="table-striped">
+                <tr>
+                    <th>Prescription Date</th>
+                    <td>{{ prescription.date }}</td>
+                </tr>
+                <tr>
+                    <th>Health Condition</th>
+                    <td>{{ prescription.health_condition }}</td>
+                </tr>
+                <tr>
+                    <th>Medical Needs</th>
+                    <td>{{ prescription.medical_needs }}</td>
+                </tr>
+                <tr>
+                    <th>Medications</th>
+                    <td>{{ prescription.medication }}</td>
+                </tr>
+                <tr>
+                    <th>Dosage</th>
+                    <td>{{ prescription.dosage }}</td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td>{{ prescription.duration }}</td>
+                </tr>
+                <tr>
+                    <th>Diet Suggestion</th>
+                    <td>{{ prescription.diet_suggention }}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
 </div>
 
 {% endblock %}

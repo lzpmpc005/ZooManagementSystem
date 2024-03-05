@@ -10,8 +10,16 @@
 
     <div class="nav-links">
         <a href="{% url 'Animals' %}">Animals</a>
-        <a href="{% url 'careroutine' %}">Care Routines</a>
+        <a href="{% url 'careroutine' %}">Routines</a>
         <a href="{% url 'Staff' %}">Staff</a>
+        {% if request.user.is_authenticated %}
+            {% if request.user.is_superuser or request.user.staff.role == "Manager" %}
+                <a class="staff-self-page" href="{% url 'getReports' %}">Self</a>
+            {% elif request.user.staff %}
+                <a class="staff-self-page" href="{% url 'staffanimals' pk=user.staff.id %}">Self</a>
+
+            {% endif %}
+        {% endif %}
     </div>
 
     <form method="GET" action="{% url 'home' %}" class="search-form">

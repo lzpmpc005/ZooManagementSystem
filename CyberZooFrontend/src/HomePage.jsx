@@ -1,5 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
+import './HabitatsComponent.css'; 
+
 
 const HabitatsComponent = () => {
   const [habitats, setHabitats] = useState([]);
@@ -23,17 +24,17 @@ const HabitatsComponent = () => {
   }, []);
 
   return (
-    <div>
-      <h2>Welcome to the CyberZoo!</h2>
-      <ul>
+    <div className="habitats">
+      <h2>Welcome To CyberZoo! Have A Good Time!</h2>
+      <div className="habitat-list">
         {habitats.map(habitat => (
-          <li key={habitat.id}>
+          <div key={habitat.id} className="habitat-card">
             <h3>{habitat.name}</h3>
+            <img src={habitat.image_url} alt={habitat.name} />
             <p>{habitat.description}</p>
-            <img src={habitat.image_url} alt={habitat.name} style={{ maxWidth: '300px' }} />
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
     </div>
   );
 };

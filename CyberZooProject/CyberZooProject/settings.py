@@ -26,8 +26,11 @@ SECRET_KEY = 'django-insecure-n0m&e5vv3+d(i@i0@)-_t9yxz2n9n1sdse!+8s(yby5z%2rkq_
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
-CORS_ALLOW_ALL_ORIGINS = True
+CORS_ORIGIN_WHITELIST = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+CORS_ALLOW_CREDENTIALS = True
 
 # Application definition
 
@@ -45,8 +48,7 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # new
-
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -80,35 +82,23 @@ WSGI_APPLICATION = 'CyberZooProject.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-# DATABASES = {
-    # "default": {
-        # "ENGINE": "django.db.backends.postgresql_psycopg2",
-        # "NAME": "CyberZoo",
-        # "USER": "postgres",
-        # "PASSWORD": "123123",
-        # "HOST": "localhost",
-        # "PORT": "5433",
-    # }
-# }
-
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.postgresql_psycopg2",
-#         "NAME": "CyberZoo",
-#         "USER": "karina&li",
-#         "PASSWORD": "karina&li",
-#         "HOST": "localhost",
-#         "PORT": "5432",
-#     }
-# }
-
 DATABASES = {
-    'default':{
-        'ENGINE':'django.db.backends.sqlite3',
-        'NAME':BASE_DIR/'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.postgresql_psycopg2",
+        "NAME": "CyberZoo",
+        "USER": "karina&li",
+        "PASSWORD": "karina&li",
+        "HOST": "localhost",
+        "PORT": "5432",
     }
 }
 
+# DATABASES = {
+#     'default':{
+#         'ENGINE':'django.db.backends.sqlite3',
+#         'NAME':BASE_DIR/'db.sqlite3',
+#     }
+# }
 
 
 # Password validation
@@ -162,9 +152,5 @@ EMAIL_HOST_USER = 'leipzig_traffic@outlook.com'
 EMAIL_HOST_PASSWORD = 'li&vincent'
 
 
-CORS_ALLOW_CREDENTIALS = True
-
-CSRF_COOKIE_SAMESITE = 'Strict'
-SESSION_COOKIE_SAMESITE = 'Strict'
-CSRF_COOKIE_HTTPONLY = False
-SESSION_COOKIE_HTTPONLY = True
+SESSION_COOKIE_SAMESITE = None
+SESSION_COOKIE_SECURE = True

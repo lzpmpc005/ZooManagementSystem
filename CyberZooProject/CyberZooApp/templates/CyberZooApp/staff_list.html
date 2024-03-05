@@ -10,8 +10,7 @@
   <table class="table-striped">
     <tr>
       <th>Name</th>
-      <th>Qualification</th>
-      <th>Responsibilities</th>
+      <th>Position</th>
       <th>Status</th>
       <th>Email</th>
       {% if request.user.is_authenticated and request.user.is_superuser %}
@@ -22,10 +21,9 @@
     {% for staff in staffs %}
     <tr>
       <td>{{ staff.user }}</td>
-      <td>{{ staff.qualification }}</td>
-      <td>{{ staff.responsibilities }}</td>
+      <td>{{ staff.role }}</td>
       <td>{{ staff.status }}</td>
-      <td>{{ staff.email }}</td>
+      <td>{{ staff.user.email }}</td>
       {% if request.user.is_authenticated and request.user.is_superuser %}
       <td>
         <a href="{% url 'delete_staff' staff.id %}" class="delete">Delete</a>
