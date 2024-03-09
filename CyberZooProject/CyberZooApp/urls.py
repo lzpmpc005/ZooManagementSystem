@@ -36,7 +36,9 @@ urlpatterns = [
     path('staff/<int:pk>/routines   ', views.staffRoutines, name='staffRoutines'),
     path('staff/<int:pk>/create_report', views.createReport, name='createReport'),
     path('staff/<int:pk>/create_prescription', views.createPrescription, name='createPrescription'),
-    path('staff/get_reports', views.getReports, name='getReports')
+    path('staff/get_reports', views.getReports, name='getReports'),
+
+    path('create_pathway/', views.create_pathway, name='create_pathway'),
 
 
 ]

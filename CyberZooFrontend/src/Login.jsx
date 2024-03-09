@@ -11,7 +11,7 @@ const client = axios.create({
   baseURL: 'http://127.0.0.1:8000/api/'
 });
 
-const cookies = new Cookies();
+// const cookies = new Cookies();
 
 const Login = ({ onLogin }) => {
   const [username, setUsername] = useState('');
