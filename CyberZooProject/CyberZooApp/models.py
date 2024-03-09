@@ -16,6 +16,8 @@ class Staff(models.Model):
     ENRICHER = 'Enricher'
     CLEANER = 'Cleaner'
     UNDECIDED = 'Undecided'
+    TOURMANAGER = 'TourManager'
+    TOURGUIDE = 'TourGuide'
 
     ROLE_CHOICES = [
         (MANAGER, 'Manager'),
@@ -24,6 +26,8 @@ class Staff(models.Model):
         (ENRICHER, 'Enricher'),
         (CLEANER, 'Cleaner'),
         (UNDECIDED, 'Undecided'),
+        (TOURMANAGER, 'TourManager'),
+        (TOURGUIDE, 'TourGuide'),
     ]
 
     role = models.CharField(
@@ -186,3 +190,29 @@ class Log(models.Model):
 
     def __str__(self):
         return self.action
+
+
+class Pathway(models.Model):
+    start = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name='start')
+    end = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name='end')
+
+
+class Tour(models.Model):
+    name = models.CharField(max_length=100)
+    description = models.TextField(null=True, blank=True)
+    start_time = models.TimeField(null=True, blank=True)
+    habitat1 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat1')
+    leave_time1 = models.TimeField(null=True, blank=True)
+    habitat2 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat2')
+    leave_time2 = models.TimeField(null=True, blank=True)
+    habitat3 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat3')
+    leave_time3 = models.TimeField(null=True, blank=True)
+    habitat4 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat4')
+    leave_time4 = models.TimeField(null=True, blank=True)
+    habitat5 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat5')
+    leave_time5 = models.TimeField(null=True, blank=True)
+    habitat6 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat6')
+    end_time = models.TimeField(null=True, blank=True)
+
+    def __str__(self):
+        return self.name

@@ -1,0 +1,34 @@
+.routines {
+    margin-top: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  } 
+
+.routine-table {
+    width: 90%;
+    margin: 40px auto;
+    border-collapse: collapse;
+    text-align: center;
+  }
+  
+  .routine-table th,
+  .routine-table td {
+    border: 1px solid #dddddd;
+    padding: 8px;
+    text-align: center;
+  }
+  
+  .routine-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+    text-align: center;
+  }
+  
+  .routine-table tbody tr:nth-child(even) {
+    background-color: #f9f9f9;
+  }
+  
+  .routine-table tbody tr:hover {
+    background-color: #f2f2f2;
+  }
+  

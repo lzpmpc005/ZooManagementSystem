@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-n0m&e5vv3+d(i@i0@)-_t9yxz2n9n1sdse!+8s(yby5z%2rkq_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 CORS_ORIGIN_WHITELIST = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
@@ -35,6 +35,10 @@ CORS_ALLOW_CREDENTIALS = True
 # Application definition
 
 INSTALLED_APPS = [
+    "corsheaders",
+    "CyberZooApp.apps.CyberZooAppConfig",
+    "rest_framework",
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -42,9 +46,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
-    "CyberZooApp.apps.CyberZooAppConfig",
-    "rest_framework",
-    "corsheaders",
 ]
 
 MIDDLEWARE = [
@@ -52,7 +53,7 @@ MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
+    #'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -153,4 +154,4 @@ EMAIL_HOST_PASSWORD = 'li&vincent'
 
 
 SESSION_COOKIE_SAMESITE = None
-SESSION_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = False

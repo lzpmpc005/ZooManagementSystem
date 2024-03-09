@@ -1,7 +1,10 @@
+import json
+
 from django.shortcuts import render, redirect
 from django.db.models import Q
+from django.views.decorators.csrf import csrf_exempt
 
-from .models import Habitat, Staff, Animal, Routine, Log, Prescription
+from .models import Habitat, Staff, Animal, Routine, Log, Prescription, Pathway
 from .forms import HabitatForm, StaffForm, AnimalForm, LogForm, PrescriptionForm, CareRoutineForm
 
 from django.contrib.auth.models import User
@@ -392,3 +395,15 @@ def send_notification_email(animal_id, triger):
     recipient_list = [nutritionist.user.email, veterinarian.user.email, enricher.user.email, cleaner.user.email, manager.user.email]
     email = EmailMessage(subject, message, from_email, recipient_list)
     email.send()
+
+
+@csrf_exempt
+def create_pathway(request):
+    if request.method == 'POST':
+        data = json.loads(request.body.decode("utf-8"))
+        start_id = data.get('start')
+        end_id = data.get('end')
+        start_habitat = Habitat.objects.get(id=start_id)
+        end_habitat = Habitat.objects.get(id=end_id)
+        pathway = Pathway.objects.create(start=start_habitat, end=end_habitat)
+        return HttpResponse({'passway_id': pathway.id})

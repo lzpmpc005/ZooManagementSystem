@@ -174,7 +174,7 @@ cd CyberZooFrontend
 (1) Login with administration/Staff account  
 (2) Check All Routines    
 (3) Check Routine in Animal detail      
-(4) Update Routine  
+(4) Update Routine   
 
 6. Routine Notification   
    (1) Start Notification Module
@@ -184,21 +184,21 @@ cd CyberZooFrontend
    (2) When the system detect an overdue routine, it will send email to the staff and manager (or not, depends on the time passed due)
 
 7. Check Assigned Animals and Tasks  
-(1) Login with Staff account  
-(2) Check all animals assigned to you in "self" page  
+(1) Login with Staff account   
+(2) Check all animals assigned to you in "self" page   
 (3) Check assigned Tasks      
 
 8. Report and Prescription  
-(1) Report Activity and animal condition  
-(2) Take actions according to notification  
-(3) Veterinarian can create prescription for an animal when necessary
-(4) Staffs who are responsible for the animal will receive notification and they can update the animal routine accordingly 
+(1) Report Activity and animal condition   
+(2) Take actions according to notification   
+(3) Veterinarian can create prescription for an animal when necessary   
+(4) Staffs who are responsible for the animal will receive notification and they can update the animal routine accordingly   
 
 9. Check Staff Activities History  
-(1) Login with administration/Manager account
-(2) Go to "Self" page
-(3) Admin will see all the activities history
-(4) Manager will see the history in his/her habitat.
+(1) Login with administration/Manager account   
+(2) Go to "Self" page   
+(3) Admin will see all the activities history   
+(4) Manager will see the history in his/her habitat.   
 
 
 > 💡 xxx [xxx] (To be continue). 
