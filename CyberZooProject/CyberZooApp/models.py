@@ -8,33 +8,31 @@ class Staff(models.Model):
     qualification = models.CharField(max_length=100)
     # delete responsibilities field because ForeignKey is used in Animal model
     # status will be turned into "unavailable" when assigned to 10 animals
-    status = models.CharField(max_length=100, null=True, blank=True, default="available")
+    status = models.CharField(
+        max_length=100, null=True, blank=True, default="available"
+    )
 
-    MANAGER = 'Manager'
-    NUTRITIONIST = 'Nutritionist'
-    VETERINARIAN = 'Veterinarian'
-    ENRICHER = 'Enricher'
-    CLEANER = 'Cleaner'
-    UNDECIDED = 'Undecided'
-    TOURMANAGER = 'TourManager'
-    TOURGUIDE = 'TourGuide'
+    MANAGER = "Manager"
+    NUTRITIONIST = "Nutritionist"
+    VETERINARIAN = "Veterinarian"
+    ENRICHER = "Enricher"
+    CLEANER = "Cleaner"
+    UNDECIDED = "Undecided"
+    TOURMANAGER = "TourManager"
+    TOURGUIDE = "TourGuide"
 
     ROLE_CHOICES = [
-        (MANAGER, 'Manager'),
-        (NUTRITIONIST, 'Nutritionist'),
-        (VETERINARIAN, 'Veterinarian'),
-        (ENRICHER, 'Enricher'),
-        (CLEANER, 'Cleaner'),
-        (UNDECIDED, 'Undecided'),
-        (TOURMANAGER, 'TourManager'),
-        (TOURGUIDE, 'TourGuide'),
+        (MANAGER, "Manager"),
+        (NUTRITIONIST, "Nutritionist"),
+        (VETERINARIAN, "Veterinarian"),
+        (ENRICHER, "Enricher"),
+        (CLEANER, "Cleaner"),
+        (UNDECIDED, "Undecided"),
+        (TOURMANAGER, "TourManager"),
+        (TOURGUIDE, "TourGuide"),
     ]
 
-    role = models.CharField(
-        max_length=30,
-        choices=ROLE_CHOICES,
-        default=UNDECIDED
-    )
+    role = models.CharField(max_length=30, choices=ROLE_CHOICES, default=UNDECIDED)
 
     def __str__(self):
         return self.user.username
@@ -47,7 +45,9 @@ class Habitat(models.Model):  # going to implement a map
     climate = models.CharField(max_length=100, null=True, blank=True)
     suitable_species = models.CharField(max_length=100, null=True, blank=True)
     image_url = models.CharField(max_length=200, null=True, blank=True)
-    manager = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True, default=None)
+    manager = models.ForeignKey(
+        Staff, on_delete=models.SET_NULL, null=True, blank=True, default=None
+    )
 
     def __str__(self):
         return self.name
@@ -58,39 +58,61 @@ class Animal(models.Model):
     diet = models.CharField(max_length=100)
     lifespan = models.IntegerField(null=True, blank=True)
     behavior = models.TextField(null=True, blank=True)
-    habitat = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True)
+    habitat = models.ForeignKey(
+        Habitat, on_delete=models.SET_NULL, null=True, blank=True
+    )
     # responsible for food
-    nutritionist = models.ForeignKey(Staff, on_delete=models.SET_NULL,
-                                     null=True, blank=True, related_name='animals_nurturing')
+    nutritionist = models.ForeignKey(
+        Staff,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="animals_nurturing",
+    )
     # responsible for physical health
-    veterinarian = models.ForeignKey(Staff, on_delete=models.SET_NULL,
-                                     null=True, blank=True, related_name='animals_caring')
+    veterinarian = models.ForeignKey(
+        Staff,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="animals_caring",
+    )
     # responsible for training/behavior/mental health
-    enricher = models.ForeignKey(Staff, on_delete=models.SET_NULL,
-                                 null=True, blank=True, related_name='animals_enriching')
+    enricher = models.ForeignKey(
+        Staff,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="animals_enriching",
+    )
     # responsible for cleaning and facility maintenance
-    cleaner = models.ForeignKey(Staff, on_delete=models.SET_NULL,
-                                null=True, blank=True, related_name='animals_cleaning')
+    cleaner = models.ForeignKey(
+        Staff,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="animals_cleaning",
+    )
     image_url = models.CharField(max_length=200, null=True, blank=True)
 
-    FINE = 'Fine'
-    SICK = 'Sick'
-    INJURED = 'Injured'
-    PREGNANT = 'Pregnant'
-    RECOVERING = 'Recovering'
-    DECEASED = 'Deceased'
-    UNDEROBSERVATION = 'Under_Observation'
-    QUARANTINED = 'Quarantined'
+    FINE = "Fine"
+    SICK = "Sick"
+    INJURED = "Injured"
+    PREGNANT = "Pregnant"
+    RECOVERING = "Recovering"
+    DECEASED = "Deceased"
+    UNDEROBSERVATION = "Under_Observation"
+    QUARANTINED = "Quarantined"
 
     STATUS_CHOICES = [
-        (FINE, 'Fine'),
-        (SICK, 'Sick'),
-        (INJURED, 'Injured'),
-        (PREGNANT, 'Pregnant'),
-        (RECOVERING, 'Recovering'),
-        (DECEASED, 'Deceased'),
-        (UNDEROBSERVATION, 'Under_Observation'),
-        (QUARANTINED, 'Quarantined'),
+        (FINE, "Fine"),
+        (SICK, "Sick"),
+        (INJURED, "Injured"),
+        (PREGNANT, "Pregnant"),
+        (RECOVERING, "Recovering"),
+        (DECEASED, "Deceased"),
+        (UNDEROBSERVATION, "Under_Observation"),
+        (QUARANTINED, "Quarantined"),
     ]
 
     status1 = models.CharField(
@@ -156,24 +178,24 @@ class Log(models.Model):
     time = models.TimeField(auto_now_add=True)
     action = models.CharField(max_length=100)
 
-    FINE = 'Fine'
-    SICK = 'Sick'
-    INJURED = 'Injured'
-    PREGNANT = 'Pregnant'
-    RECOVERING = 'Recovering'
-    DECEASED = 'Deceased'
-    UNDEROBSERVATION = 'Under_Observation'
-    QUARANTINED = 'Quarantined'
+    FINE = "Fine"
+    SICK = "Sick"
+    INJURED = "Injured"
+    PREGNANT = "Pregnant"
+    RECOVERING = "Recovering"
+    DECEASED = "Deceased"
+    UNDEROBSERVATION = "Under_Observation"
+    QUARANTINED = "Quarantined"
 
     STATUS_CHOICES = [
-        (FINE, 'Fine'),
-        (SICK, 'Sick'),
-        (INJURED, 'Injured'),
-        (PREGNANT, 'Pregnant'),
-        (RECOVERING, 'Recovering'),
-        (DECEASED, 'Deceased'),
-        (UNDEROBSERVATION, 'Under_Observation'),
-        (QUARANTINED, 'Quarantined'),
+        (FINE, "Fine"),
+        (SICK, "Sick"),
+        (INJURED, "Injured"),
+        (PREGNANT, "Pregnant"),
+        (RECOVERING, "Recovering"),
+        (DECEASED, "Deceased"),
+        (UNDEROBSERVATION, "Under_Observation"),
+        (QUARANTINED, "Quarantined"),
     ]
 
     animal_status1 = models.CharField(
@@ -193,26 +215,73 @@ class Log(models.Model):
 
 
 class Pathway(models.Model):
-    start = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name='start')
-    end = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name='end')
+    start = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name="start")
+    end = models.ForeignKey(Habitat, on_delete=models.CASCADE, related_name="end")
 
 
 class Tour(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
     start_time = models.TimeField(null=True, blank=True)
-    habitat1 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat1')
+    habitat1 = models.ForeignKey(
+        Habitat,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="habitat1",
+    )
     leave_time1 = models.TimeField(null=True, blank=True)
-    habitat2 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat2')
+    habitat2 = models.ForeignKey(
+        Habitat,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="habitat2",
+    )
     leave_time2 = models.TimeField(null=True, blank=True)
-    habitat3 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat3')
+    habitat3 = models.ForeignKey(
+        Habitat,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="habitat3",
+    )
     leave_time3 = models.TimeField(null=True, blank=True)
-    habitat4 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat4')
+    habitat4 = models.ForeignKey(
+        Habitat,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="habitat4",
+    )
     leave_time4 = models.TimeField(null=True, blank=True)
-    habitat5 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat5')
+    habitat5 = models.ForeignKey(
+        Habitat,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="habitat5",
+    )
     leave_time5 = models.TimeField(null=True, blank=True)
-    habitat6 = models.ForeignKey(Habitat, on_delete=models.SET_NULL, null=True, blank=True, related_name='habitat6')
+    habitat6 = models.ForeignKey(
+        Habitat,
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name="habitat6",
+    )
     end_time = models.TimeField(null=True, blank=True)
 
     def __str__(self):
         return self.name
+
+
+class Feedback(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    message = models.TextField()
+    tour = models.ForeignKey(Tour, on_delete=models.CASCADE)
+    feedback_time = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"{self.name} - {self.email} - {self.feedback_time}"

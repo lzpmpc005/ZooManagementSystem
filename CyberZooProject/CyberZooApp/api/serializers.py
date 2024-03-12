@@ -1,42 +1,51 @@
 from rest_framework.serializers import ModelSerializer
-from CyberZooApp.models import (Animal, Habitat, Staff,
-                                Routine, Log, Prescription, Tour, Pathway)
+from CyberZooApp.models import (
+    Animal,
+    Habitat,
+    Staff,
+    Routine,
+    Log,
+    Prescription,
+    Tour,
+    Pathway,
+    Feedback,
+)
 
 
 class HabitatSerializer(ModelSerializer):
     class Meta:
         model = Habitat
-        fields = '__all__'
+        fields = "__all__"
 
 
 class AnimalSerializer(ModelSerializer):
     class Meta:
         model = Animal
-        fields = '__all__'
+        fields = "__all__"
 
 
 class StaffSerializer(ModelSerializer):
     class Meta:
         model = Staff
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RoutineSerializer(ModelSerializer):
     class Meta:
         model = Routine
-        fields = '__all__'
+        fields = "__all__"
 
 
 class LogSerializer(ModelSerializer):
     class Meta:
         model = Log
-        fields = '__all__'
+        fields = "__all__"
 
 
 class PrescriptionSerializer(ModelSerializer):
     class Meta:
         model = Prescription
-        fields = '__all__'
+        fields = "__all__"
 
 
 class TourSerializer(ModelSerializer):
@@ -49,6 +58,27 @@ class TourSerializer(ModelSerializer):
 
     class Meta:
         model = Tour
-        fields = ['id', 'name', 'description', 'start_time', 'habitat1', 'leave_time1', 'habitat2', 'leave_time2',
-                  'habitat3', 'leave_time3', 'habitat4', 'leave_time4', 'habitat5', 'leave_time5', 'habitat6',
-                  'end_time']
+        fields = [
+            "id",
+            "name",
+            "description",
+            "start_time",
+            "habitat1",
+            "leave_time1",
+            "habitat2",
+            "leave_time2",
+            "habitat3",
+            "leave_time3",
+            "habitat4",
+            "leave_time4",
+            "habitat5",
+            "leave_time5",
+            "habitat6",
+            "end_time",
+        ]
+
+
+class FeedbackSerializer(ModelSerializer):
+    class Meta:
+        model = Feedback
+        fields = "__all__"
