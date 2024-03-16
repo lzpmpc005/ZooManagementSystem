@@ -12,6 +12,7 @@ import TourDetails from "./tours/tourDetails";
 import React, { useState, useEffect } from "react";
 
 const INITIAL_DATA = {
+  guide_id: "",
   name: "",
   description: "",
   start_time: "",
@@ -203,7 +204,7 @@ function ManageTours() {
           return "Invalid Time! Stay Too Long.";
         }
       }
-    } else if (currentStepIndex > 1) {
+    } else if (1 < currentStepIndex && currentStepIndex < 6) {
       // Check if habitat_id is already chosen
       for (let i = 1; i <= currentStepIndex - 1; i++) {
         if (
@@ -218,6 +219,40 @@ function ManageTours() {
       );
       const currentLeaveTime = convertTimeToInt(
         stepData[`leave_time${currentStepIndex}`]
+      );
+
+      if (previousLeaveTime && currentLeaveTime) {
+        const diffInMinutes = currentLeaveTime - previousLeaveTime;
+
+        console.log("diffInMinutes:", diffInMinutes);
+
+        if (diffInMinutes < 0) {
+          return "Invalid Time! Earlier than previous leave time.";
+        }
+
+        if (diffInMinutes < 20) {
+          return "Invalid Time! Stay Too Short.";
+        }
+
+        if (diffInMinutes > 60) {
+          return "Invalid Time! Stay Too Long.";
+        }
+      }
+    } else if (currentStepIndex === 6) {
+      // Check if habitat_id is already chosen
+      for (let i = 1; i <= currentStepIndex - 1; i++) {
+        if (
+          data[`habitat${i}_id`] === stepData[`habitat${currentStepIndex}_id`]
+        ) {
+          return "This habitat is already chosen for this tour.";
+        }
+      }
+
+      const previousLeaveTime = convertTimeToInt(
+        data[`leave_time${currentStepIndex - 1}`]
+      );
+      const currentLeaveTime = convertTimeToInt(
+        stepData[`end_time`]
       );
 
       if (previousLeaveTime && currentLeaveTime) {
@@ -351,6 +386,7 @@ function ManageTours() {
               <React.Fragment key={tour.id}>
                 <tr style={{ backgroundColor: "#f2f2f2" }}>
                   <th>Tour ID</th>
+                  <th>Guide</th>
                   <th>Name</th>
                   <th>Description</th>
                   <th>Start Time</th>
@@ -358,6 +394,7 @@ function ManageTours() {
                 </tr>
                 <tr style={{ borderBottom: "1px solid #ddd" }}>
                   <td>{tour.id}</td>
+                  <td>{tour.guide && tour.guide.user ? tour.guide.user.username : 'No guide assigned'}</td>
                   <td>{tour.name}</td>
                   <td>{tour.description}</td>
                   <td>{tour.start_time}</td>

@@ -15,6 +15,8 @@ from CyberZooApp.models import (
     Pathway,
     Tour,
     Feedback,
+    Membership,
+    Customer,
 )
 from .serializers import (
     HabitatSerializer,
@@ -24,6 +26,9 @@ from .serializers import (
     PrescriptionSerializer,
     TourSerializer,
     FeedbackSerializer,
+    StaffSerializer,
+    MembershipSerializer,
+    CustomerSerializer,
 )
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -121,16 +126,39 @@ def login_user(request):
                     }
                 )
             else:
-                staff = Staff.objects.get(user=user)
-                login(request, user)
-                return JsonResponse(
-                    {
-                        "detail": "Login successful",
-                        "username": username,
-                        "id": staff.id,
-                        "role": staff.role,
-                    }
-                )
+                staff = Staff.objects.filter(user=user).first()
+                if staff:
+                    login(request, user)
+                    return JsonResponse(
+                        {
+                            "detail": "Login successful",
+                            "username": username,
+                            "id": staff.id,
+                            "role": staff.role,
+                        }
+                    )
+                else:
+                    customer = Customer.objects.get(user=user)
+                    login(request, user)
+                    if customer.membership is not None:
+                        return JsonResponse(
+                            {
+                                "detail": "Login successful",
+                                "username": username,
+                                "id": customer.id,
+                                "age": customer.age,
+                                "membership": customer.membership.tier,
+                            }
+                        )
+                    return JsonResponse(
+                        {
+                            "detail": "Login successful",
+                            "username": username,
+                            "id": customer.id,
+                            "age": customer.age,
+                            "membership": "",
+                        }
+                    )
         else:
             return JsonResponse({"error": "Invalid username or password"}, status=400)
     except json.JSONDecodeError:
@@ -259,6 +287,7 @@ def createTour(request):
     #     return JsonResponse({'error': 'You are not allowed here!'}, status=400)
     try:
         Tour.objects.create(
+            guide_id=data.get("guide_id"),
             name=data.get("name"),
             description=data.get("description"),
             start_time=data.get("start_time"),
@@ -301,3 +330,138 @@ def getTour(request, pk):
 def deleteTour(request, pk):
     Tour.objects.filter(id=pk).delete()
     return JsonResponse({"detail": "Tours deleted successfully"}, status=200)
+
+
+@api_view(["GET"])
+def getGuides(request):
+    guides = Staff.objects.filter(role="TourGuide")
+    if not guides:
+        return JsonResponse({"message": "No guides available."}, status=404)
+    serializer = StaffSerializer(guides, many=True)
+    return Response(serializer.data)
+
+
+# week 4
+@api_view(["POST"])
+def createMembership(request):
+    data = json.loads(request.body)
+    membership = Membership.objects.filter(tier=data.get("tier"))
+    if membership:
+        return JsonResponse({"error": "Membership already exists"}, status=400)
+    try:
+        tier = data.get("tier")
+        price = data.get("price")
+        discount = data.get("discount")
+        free_parking = data.get("free_parking")
+        special_events = data.get("special_events")
+        Membership.objects.create(
+            tier=tier,
+            price=price,
+            discount=discount,
+            free_parking=free_parking,
+            special_events=special_events,
+        )
+
+        return JsonResponse({"detail": "Membership created successfully"}, status=201)
+    except Exception as e:
+        return JsonResponse({"error": f"{e}"}, status=400)
+
+
+@api_view(["GET"])
+def getMemberships(request):
+    memberships = Membership.objects.all().order_by("id")
+    serializer = MembershipSerializer(memberships, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["POST"])
+def updateMembership(request):
+    data = json.loads(request.body)
+    try:
+        id = data.get("id")
+        tier = data.get("tier")
+        price = data.get("price")
+        print(price)
+        discount = data.get("discount")
+        free_parking = data.get("free_parking")
+        special_events = data.get("special_events")
+        membership = Membership.objects.get(id=id)
+        membership.tier = tier
+        membership.price = price
+        membership.discount = discount
+        membership.free_parking = free_parking
+        membership.special_events = special_events
+        membership.save()
+        return JsonResponse({"message": "Membership updated successfully"}, status=201)
+    except Exception as e:
+        return JsonResponse({"message": f"{e}"}, status=400)
+
+
+@api_view(["POST"])
+def register(request):
+    data = json.loads(request.body)
+    try:
+        username = data.get("username")
+        email = data.get("email")
+        password = data.get("password")
+        age = data.get("age")
+        user = User.objects.filter(email=email)
+        if user:
+            return JsonResponse({"message": "You have already registered!"}, status=400)
+        user = User.objects.create_user(username, email, password)
+        Customer.objects.create(user=user, age=age)
+        return JsonResponse({"message": "User registered successfully"}, status=201)
+    except Exception as e:
+        return JsonResponse({"message": f"{e}"}, status=400)
+
+
+@api_view(["GET"])
+def getCustomer(request, pk):
+    customer = Customer.objects.get(id=pk)
+    serializer = CustomerSerializer(customer)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+def getCustomers(request):
+    customers = Customer.objects.all()
+    serializer = CustomerSerializer(customers, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["POST"])
+def joinMembership(request):
+    data = json.loads(request.body)
+    try:
+        id = data.get("customerId")
+        customer = Customer.objects.get(id=id)
+        if customer.membership:
+            return JsonResponse(
+                {"message": "You have already joined a membership"}, status=400
+            )
+        membership = Membership.objects.get(tier=data.get("tier"))
+        customer.membership = membership
+        customer.save()
+        return JsonResponse({"message": "Membership joined successfully"}, status=200)
+    except Exception as e:
+        return JsonResponse({"message": f"{e}"}, status=400)
+
+
+@api_view(["POST"])
+def changeMembership(request):
+    data = json.loads(request.body)
+    try:
+        id = data.get("customerId")
+        customer = Customer.objects.get(id=id)
+        tier = data.get("tier")
+        if tier is "":
+            customer.membership_id = None
+            customer.save()
+            return JsonResponse({"message": "Membership canceled successfully"}, status=200)
+        else:
+            membership = Membership.objects.get(tier=data.get("tier"))
+            customer.membership = membership
+            customer.save()
+            return JsonResponse({"message": "Membership changed successfully"}, status=200)
+    except Exception as e:
+        return JsonResponse({"message": f"{e}"}, status=400)

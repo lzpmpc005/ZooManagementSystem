@@ -27,4 +27,17 @@ urlpatterns = [
     path("get_tours/", views.getTours, name="get_tours"),
     path("get_tour/<int:pk>/", views.getTour, name="get_tour"),
     path("delete_tour/<int:pk>/", views.deleteTour, name="delete_tour"),
+
+    path("get_guides/", views.getGuides, name="get_guides"),
+
+    # week 4
+    path("create_membership/", views.createMembership, name="create_membership"),
+    path("get_memberships/", views.getMemberships, name="get_memberships"),
+    path("update_membership/", views.updateMembership, name="update_membership"),
+    path("register/", views.register, name="register"),
+    path("get_customer/<int:pk>", views.getCustomer, name="get_customer"),
+    path("get_customers/", views.getCustomers, name="get_customers"),
+    path("join_membership/", views.joinMembership, name="join_membership"),
+    path("change_membership/", views.changeMembership, name="change_membership"),
+
 ]

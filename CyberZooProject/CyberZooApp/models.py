@@ -222,6 +222,7 @@ class Pathway(models.Model):
 class Tour(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True, blank=True)
+    guide = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, blank=True)
     start_time = models.TimeField(null=True, blank=True)
     habitat1 = models.ForeignKey(
         Habitat,
@@ -285,3 +286,30 @@ class Feedback(models.Model):
 
     def __str__(self):
         return f"{self.name} - {self.email} - {self.feedback_time}"
+
+
+class Membership(models.Model):
+    EXPLORER = "Explorer"
+    PROTECTOR = "Protector"
+    GUARDIAN = "Guardian"
+    CHAMPION = "Champion"
+
+    TIER_CHOICES = [
+        (EXPLORER, "Explorer"),
+        (PROTECTOR, "Protector"),
+        (GUARDIAN, "Guardian"),
+        (CHAMPION, "Champion"),
+    ]
+
+    tier = models.CharField(max_length=30, choices=TIER_CHOICES, default=None)
+    price = models.DecimalField(decimal_places=2, max_digits=10)
+    discount = models.DecimalField(decimal_places=2, max_digits=10)
+    free_parking = models.BooleanField(default=False)
+    special_events = models.BooleanField(default=False)
+
+
+class Customer(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    age = models.IntegerField()
+    membership = models.ForeignKey(Membership, on_delete=models.SET_NULL, null=True, default=None)
+

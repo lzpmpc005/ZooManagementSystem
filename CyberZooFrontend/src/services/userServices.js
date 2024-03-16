@@ -19,3 +19,18 @@ export const logout = () => {
       return response;
     });
 };
+
+
+export const register = (username, password, email, age) => {
+  return instance
+    .post("register/", {
+      username,
+      password,
+      email,
+      age,
+    })
+    .then((response) => {
+      console.log(response);
+      return response;
+    });
+};

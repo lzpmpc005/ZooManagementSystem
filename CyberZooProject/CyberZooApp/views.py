@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect
 from django.db.models import Q
 from django.views.decorators.csrf import csrf_exempt
 
-from .models import Habitat, Staff, Animal, Routine, Log, Prescription, Pathway
+from .models import Habitat, Staff, Animal, Routine, Log, Prescription, Pathway, Membership
 from .forms import HabitatForm, StaffForm, AnimalForm, LogForm, PrescriptionForm, CareRoutineForm
 
 from django.contrib.auth.models import User
@@ -407,3 +407,4 @@ def create_pathway(request):
         end_habitat = Habitat.objects.get(id=end_id)
         pathway = Pathway.objects.create(start=start_habitat, end=end_habitat)
         return HttpResponse({'passway_id': pathway.id})
+
