@@ -9,7 +9,10 @@ from CyberZooApp.models import (
     Tour,
     Pathway,
     Feedback,
+    Membership,
+    Customer,
 )
+from django.contrib.auth.models import User
 
 
 class HabitatSerializer(ModelSerializer):
@@ -24,10 +27,18 @@ class AnimalSerializer(ModelSerializer):
         fields = "__all__"
 
 
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "email"]
+
+
 class StaffSerializer(ModelSerializer):
+    user = UserSerializer(read_only=True)
+
     class Meta:
         model = Staff
-        fields = "__all__"
+        fields = ["id", "user", "role", "qualification", "status"]
 
 
 class RoutineSerializer(ModelSerializer):
@@ -49,6 +60,7 @@ class PrescriptionSerializer(ModelSerializer):
 
 
 class TourSerializer(ModelSerializer):
+    guide = StaffSerializer(read_only=True)
     habitat1 = HabitatSerializer(read_only=True)
     habitat2 = HabitatSerializer(read_only=True)
     habitat3 = HabitatSerializer(read_only=True)
@@ -60,6 +72,7 @@ class TourSerializer(ModelSerializer):
         model = Tour
         fields = [
             "id",
+            "guide",
             "name",
             "description",
             "start_time",
@@ -82,3 +95,18 @@ class FeedbackSerializer(ModelSerializer):
     class Meta:
         model = Feedback
         fields = "__all__"
+
+
+class MembershipSerializer(ModelSerializer):
+    class Meta:
+        model = Membership
+        fields = "__all__"
+
+
+class CustomerSerializer(ModelSerializer):
+    user = UserSerializer(read_only=True)
+    membership = MembershipSerializer(read_only=True)
+
+    class Meta:
+        model = Customer
+        fields = ["id", "age", "user", "membership"]

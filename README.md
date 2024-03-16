@@ -26,6 +26,8 @@ This project is a web application for zoo management, developed with Django and 
 - manage animals
 - manage animal routine
 - track and log staff activity
+- manage tours and feedback
+- mamage membership and events
 
 
 ## Requirements[![](https://raw.githubusercontent.com/aregtech/areg-sdk/master/docs/img/pin.svg)](#requirements)
@@ -200,6 +202,41 @@ cd CyberZooFrontend
 (3) Admin will see all the activities history   
 (4) Manager will see the history in his/her habitat.   
 
+10. Create Map  
+(1) Login with administration account   
+(2) Create Habitats and Pathways in between   
+
+11. Manage Tour  
+(1) Login with administration/TourManager account   
+(2) Go to "Tours" page   
+(3) Create New Tour following instructions  
+(4) Check and Delete existing tours.  
+
+12. Manage Feedback  
+(1) Login   
+(2) Go to "Tour Details" page   
+(3) Create New Feedback   
+(4) Check and Delete Feedback  
+
+> [!NOTE]
+> Only Admin account can delete feedbacks.
+
+13. Create/Update Membership  
+(1) Login with Admin account   
+(2) Go to "Membership" page   
+(3) Create/Update Membership   
+
+14. Join/Switch/Cancel Membership  
+(1) Login with Customer account   
+(2) Go to "Membership" page   
+(3) Join/Switch/Cancel Membership   
+(4) Go to "Profile" page and check personal details    
+
+15. Manage Special Events  
+(1)    
+(2)    
+(3)    
+(4)   
 
 > 💡 xxx [xxx] (To be continue). 
 

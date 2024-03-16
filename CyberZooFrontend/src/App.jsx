@@ -8,22 +8,44 @@ import NavDropdown from "react-bootstrap/NavDropdown";
 
 import HomePage from "./HomePage.jsx";
 import Animals from "./Animals.jsx";
+import Tours from "./Tours.jsx";
 import Login from "./Login.jsx";
+import Register from "./Register";
 import StaffAssignedAnimals from "./StaffAssignedAnimals.jsx";
 import StaffAssignedTasks from "./StaffAssignedTasks.jsx";
 import ManageTours from "./ManageTours.jsx";
 import { logout } from "./services/userServices.js";
 import TourDetails from "./tours/tourDetails.jsx";
+import Membership from "./Membership.jsx";
+import CreateMembership from "./CreateMembership.jsx";
+import UserProfile from './UserProfile.jsx';
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
   const [loggedInUserPk, setLoggedInUserPk] = useState(null);
+  const [userRole, setUserRole] = useState(null);
+  const [userAge, setUserAge] = useState(null);
+  const [userMembership, setUserMembership] = useState(null);
 
-  const handleLogin = (username, pk) => {
+
+  const handleLogin = (username, pk, role, age, membership) => {
     localStorage.setItem("loggedInUser", username);
     localStorage.setItem("loggedInUserPk", pk);
+    localStorage.setItem("userRole", role);
+    localStorage.setItem("userAge", age);
+    localStorage.setItem("userMembership", membership);
+
     setLoggedInUser(username);
     setLoggedInUserPk(pk);
+    setUserRole(role);
+    setUserAge(age);
+    setUserMembership(membership);
+
+  };
+
+  const updateUserMembership = (membership) => {
+    setUserMembership(membership);
+    localStorage.setItem("userMembership", membership);
   };
 
   function handleLogout(event) {
@@ -43,9 +65,22 @@ function App() {
   useEffect(() => {
     const user = localStorage.getItem("loggedInUser");
     const pk = localStorage.getItem("loggedInUserPk");
+    const role = localStorage.getItem("userRole");
+    const age = localStorage.getItem("userAge");
+    const membership = localStorage.getItem("userMembership");
+    
     if (user && pk) {
       setLoggedInUser(user);
       setLoggedInUserPk(pk);
+    }
+    if (role) {
+      setUserRole(role);
+    }
+    if (age) {
+      setUserAge(age);
+    }
+    if (membership) {
+      setUserMembership(membership);
     }
   }, []);
 
@@ -62,6 +97,12 @@ function App() {
               </Nav.Link>
               <Nav.Link as={Link} to="/animals">
                 Animals
+              </Nav.Link>
+              <Nav.Link as={Link} to="/tours">
+                Tours
+              </Nav.Link>
+              <Nav.Link as={Link} to="/membership">
+                Membership
               </Nav.Link>
             </Nav>
             <Nav className="ml-auto">
@@ -97,10 +138,11 @@ function App() {
           </Navbar.Collapse>
         </Container>
       </Navbar>
-
       <Routes>
         <Route path="/home" element={<HomePage />} />
         <Route path="/animals" element={<Animals />} />
+        <Route path="/tours" element={<Tours />} />
+        <Route path="/membership" element={<Membership userRole={userRole} userAge={userAge} userMembership={userMembership} customerId={loggedInUserPk} updateUserMembership={updateUserMembership} />} />
         <Route
           path="/assigned-animals"
           element={<StaffAssignedAnimals pk={loggedInUserPk} />}
@@ -110,8 +152,11 @@ function App() {
           element={<StaffAssignedTasks pk={loggedInUserPk} />}
         />
         <Route path="/login" element={<Login onLogin={handleLogin} />} />
+        <Route path="/register" element={<Register />} />
         <Route path="/manage-tours" element={<ManageTours />} />
-        <Route path="/tourDetails/:tourId" element={<TourDetails />} />
+        <Route path="/tours" element={<Tours />} />
+        <Route path="/create-membership" element={<CreateMembership />} />
+        <Route path="/profile" element={<UserProfile customerId={loggedInUserPk} />} />
       </Routes>
     </Router>
   );

@@ -13,6 +13,8 @@ export const createFeedback = async (name, email, message, tour) => {
     tour,
     feedback_time: new Date(),
   });
+  if (response.status === 201)
+  window.alert("Feedback created successfully!"); // Add the alert here
   return response;
 };
 
