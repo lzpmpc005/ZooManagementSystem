@@ -38,6 +38,7 @@ INSTALLED_APPS = [
     "corsheaders",
     "CyberZooApp.apps.CyberZooAppConfig",
     "rest_framework",
+    "PaymentApp.apps.PaymentappConfig",
 
     'django.contrib.admin',
     'django.contrib.auth',

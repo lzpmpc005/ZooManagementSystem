@@ -1,7 +1,40 @@
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
+import Payment from './transaction/Payment.jsx';
 
 const Membership = ({ userRole, userAge, userMembership, customerId, updateUserMembership }) => {
+    const [showPaymentModal, setShowPaymentModal] = useState(false);
+    const [selectedMembership, setSelectedMembership] = useState(null);
+    const [action, setAction] = useState('');
+
+    const showPayment = (membership) => {
+        if (membership.tier === "Explorer" && userAge > 16) {
+            window.alert('You are not eligible to join the Explorer membership.');
+            return;
+        }
+        setSelectedMembership(membership);
+        setShowPaymentModal(true);
+    };
+
+    const closePaymentModal = () => {
+        setShowPaymentModal(false);
+        setSelectedMembership(null);
+    };
+
+    const handlePaymentStatus = (paymentSuccessful) => {
+        console.log('handlePaymentStatus:', paymentSuccessful, selectedMembership, customerId, action);
+        if (paymentSuccessful) {
+            if (action === "join") {
+                handleJoinMembership(selectedMembership, customerId);
+            } else if (action === "switch") {
+                handleChangeMembership(selectedMembership, customerId);
+            }
+            closePaymentModal();
+        } else {
+            window.alert('Payment failed. Please try again.');
+        }
+    };
+
     const [Message, setMessage] = useState('');
 
     const styles = {
@@ -10,13 +43,13 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
           textAlign: 'center',
           borderBottom: '2px solid #ddd',
           backgroundColor: '#f2f2f2',
-          fontSize: '1.2em', // Larger font size
+          fontSize: '1.2em',
         },
         cell: {
           padding: '16px',
           textAlign: 'center',
           borderBottom: '2px solid #ddd',
-          fontSize: '1.1em', // Larger font size
+          fontSize: '1.1em', 
         },
         button: {
             padding: '10px 20px',
@@ -25,7 +58,6 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
             borderRadius: '6px',
             cursor: 'pointer',
             fontSize: '1.1em',
-            // Purple background for Join button
             backgroundColor: 'green',
         },
 
@@ -36,7 +68,6 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
             borderRadius: '6px',
             cursor: 'pointer',
             fontSize: '1.1em',
-            // Red background for Cancel button
             backgroundColor: 'red',
         },
     };
@@ -115,7 +146,7 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
         event.preventDefault();
         console.log(JSON.stringify(formFields))
         const endpoint = formFields.id ? 'update_membership/' : 'create_membership/';
-
+        console.log('handleCreateOrUpdate:', endpoint);
         fetch(`http://127.0.0.1:8000/api/${endpoint}`, {
             method: 'POST',
             headers: {
@@ -123,7 +154,12 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
             },
             body: JSON.stringify(formFields),
         })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => {throw new Error(err.error)});
+            }
+            return response.json();
+        })
         .then(data => {
             setMemberships(prevMemberships => {
                 const updatedMemberships = prevMemberships.map(membership => {
@@ -132,95 +168,46 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
                 return updatedMemberships;
             });
             handleCloseModal();
-            console.log(data.message)
-            setMessage(data.message)
-            window.alert(Message); 
+            window.alert(data.message); 
+            window.location.reload();
         })
         .catch(error => {
             console.log(error);
-            window.alert(error.error);
+            window.alert(error);
         });
     };
 
     
-    const handleJoinMembership = (membership, customerId) => {
-        if (membership.tier === "Explorer" && userAge > 16) {
-            window.alert('You are not eligible to join the Explorer membership.');
-            return;
-        } else {
-            console.log(
-                "Joining membership:",
-                customerId)
-                
-            fetch("http://127.0.0.1:8000/api/join_membership/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    customerId: customerId,
-                    tier: membership.tier
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                updateUserMembership(membership.tier);
-                setMemberships(prevMemberships => {
-                    const updatedMemberships = prevMemberships.map(membership => {
-                        return membership.id === data.id ? data : membership;
-                    });
-                    return updatedMemberships;
+    const handleJoinMembership = (selectedMembership, customerId) => {
+        fetch("http://127.0.0.1:8000/api/join_membership/", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                customerId: customerId,
+                tier: selectedMembership.tier
+            }),
+        })
+        .then(response => response.json())
+        .then(data => {
+            updateUserMembership(selectedMembership.tier);
+            setMemberships(prevMemberships => {
+                const updatedMemberships = prevMemberships.map(membership => {
+                    return membership.id === data.id ? data : membership;
                 });
-                handleCloseModal(); 
-                window.alert('Membership joined successfully!'); 
-            })
-            .catch(error => {
-                console.log(error);
-                window.alert(error.error);
+                return updatedMemberships;
             });
-        } 
+            window.alert('Membership joined successfully!'); 
+        })
+        .catch(error => {
+            console.log(error);
+            window.alert(error.error);
+        }); 
     };
      
 
-    const handleChangeMembership = (membership, customerId) => {
-        if (membership.tier === "Explorer" && userAge > 16) {
-            window.alert('You are not eligible to join the Explorer membership.');
-            return;
-        } else {
-            console.log(
-                "Joining membership:",
-                customerId)
-                
-            fetch("http://127.0.0.1:8000/api/change_membership/", {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    customerId: customerId,
-                    tier: membership.tier
-                }),
-            })
-            .then(response => response.json())
-            .then(data => {
-                updateUserMembership(membership.tier);
-                setMemberships(prevMemberships => {
-                    const updatedMemberships = prevMemberships.map(membership => {
-                        return membership.id === data.id ? data : membership;
-                    });
-                    return updatedMemberships;
-                });
-                handleCloseModal(); 
-                window.alert('Membership switched successfully!'); 
-            })
-            .catch(error => {
-                console.log(error);
-                window.alert(error.error);
-            });
-        } 
-    };
-
-    const handleCancelMembership = (customerId) => {
+    const handleChangeMembership = (selectedMembership, customerId) => {
         fetch("http://127.0.0.1:8000/api/change_membership/", {
             method: 'POST',
             headers: {
@@ -228,26 +215,56 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
             },
             body: JSON.stringify({
                 customerId: customerId,
-                tier: ''
+                tier: selectedMembership.tier
             }),
         })
         .then(response => response.json())
         .then(data => {
-            updateUserMembership("");
+            updateUserMembership(selectedMembership.tier);
             setMemberships(prevMemberships => {
                 const updatedMemberships = prevMemberships.map(membership => {
                     return membership.id === data.id ? data : membership;
                 });
                 return updatedMemberships;
             });
-            handleCloseModal(); 
-            window.alert('Membership cancled successfully!'); 
+            window.alert('Membership switched successfully!'); 
         })
         .catch(error => {
             console.log(error);
             window.alert(error.error);
         });
-        };
+    };
+
+    const handleCancelMembership = (customerId) => {
+        const confirmed = window.confirm('Are you sure you want to cancel your membership?');
+        if (confirmed) {
+            fetch("http://127.0.0.1:8000/api/change_membership/", {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    customerId: customerId,
+                    tier: ''
+                }),
+            })
+            .then(response => response.json())
+            .then(data => {
+                updateUserMembership("");
+                setMemberships(prevMemberships => {
+                    const updatedMemberships = prevMemberships.map(membership => {
+                        return membership.id === data.id ? data : membership;
+                    });
+                    return updatedMemberships;
+                });
+                window.alert('Membership canceled successfully!'); 
+            })
+            .catch(error => {
+                console.log(error);
+                window.alert(error.error);
+            });
+        }
+    };
 
     return (
         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
@@ -263,7 +280,7 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
                     <button
                         style={{ 
                             padding: '15px 30px',
-                            fontSize: '1.1em', // Larger font size
+                            fontSize: '1.1em', 
                             backgroundColor: '#007BFF', 
                             color: 'white', 
                             borderRadius: '6px', 
@@ -302,10 +319,16 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
                                         <button style={styles.button} onClick={() => handleUpdateMembership(membership)}>Update</button>
                                     ) : (
                                         !userMembership ? (
-                                            <button style={styles.button} onClick={() => handleJoinMembership(membership, customerId)}>Join</button>
+                                            <button style={styles.button} onClick={() => {
+                                                showPayment(membership);
+                                                setAction("join");
+                                            }}>Join</button>
                                         ) : (
                                             membership.tier !== userMembership ? (
-                                                <button style={styles.button} onClick={() => handleChangeMembership(membership, customerId)}>Switch</button>
+                                                <button style={styles.button} onClick={() => {
+                                                    showPayment(membership);
+                                                    setAction("switch");
+                                                }}>Switch</button>
                                             ) : <button style={styles.cancelButton} onClick={() => handleCancelMembership(customerId)}>Cancel</button>
                                         )
                                     )}
@@ -409,9 +432,19 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
                                 <label className="form-check-label">Special Events</label>
                             </div>
                             <button className="btn btn-primary" type="submit">{submitButtonText} Membership</button>
+
                         </form>
                     </Modal.Body>
                 </Modal>
+                <Modal show={showPaymentModal} onHide={closePaymentModal} centered size="lg">
+                    <Modal.Header closeButton>
+                        <Modal.Title>Fake Payment GateWay</Modal.Title>
+                    </Modal.Header>
+                    <Modal.Body>
+                        <Payment handlePaymentStatus={handlePaymentStatus} />
+                    </Modal.Body>
+                </Modal>             
+                
             </div>
         </div>
     );
