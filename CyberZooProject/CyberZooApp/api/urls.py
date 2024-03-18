@@ -39,5 +39,7 @@ urlpatterns = [
     path("get_customers/", views.getCustomers, name="get_customers"),
     path("join_membership/", views.joinMembership, name="join_membership"),
     path("change_membership/", views.changeMembership, name="change_membership"),
-
+    path("events/", views.event_list, name="event_list"),
+    path("events/<int:pk>", views.event_detail, name="event_detail"),
+    path('send_event_email/', views.send_event_email, name='send_event_email'),
 ]
