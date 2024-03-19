@@ -27,7 +27,8 @@ This project is a web application for zoo management, developed with Django and 
 - manage animal routine
 - track and log staff activity
 - manage tours and feedback
-- mamage membership and events
+- mamage membership with a fake payment gateway  
+- manage events and notify customers with membership
 
 
 ## Requirements[![](https://raw.githubusercontent.com/aregtech/areg-sdk/master/docs/img/pin.svg)](#requirements)
@@ -225,6 +226,9 @@ cd CyberZooFrontend
 (1) Login with Admin account   
 (2) Go to "Membership" page   
 (3) Create/Update Membership   
+
+> [!NOTE]
+> To pass the payment gateway, you need to manually insert card information into "creditcardaccount" table and fill up the payment form accordingly.
 
 14. Join/Switch/Cancel Membership  
 (1) Login with Customer account   

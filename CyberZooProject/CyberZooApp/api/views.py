@@ -364,7 +364,7 @@ def createMembership(request):
             special_events=special_events,
         )
 
-        return JsonResponse({"detail": "Membership created successfully"}, status=201)
+        return JsonResponse({"message": "Membership created successfully"}, status=201)
     except Exception as e:
         return JsonResponse({"error": f"{e}"}, status=400)
 
@@ -383,7 +383,6 @@ def updateMembership(request):
         id = data.get("id")
         tier = data.get("tier")
         price = data.get("price")
-        print(price)
         discount = data.get("discount")
         free_parking = data.get("free_parking")
         special_events = data.get("special_events")
