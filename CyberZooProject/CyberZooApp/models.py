@@ -293,6 +293,7 @@ class Membership(models.Model):
     PROTECTOR = "Protector"
     GUARDIAN = "Guardian"
     CHAMPION = "Champion"
+    PREMIUM = "Premium"
 
     TIER_CHOICES = [
         (EXPLORER, "Explorer"),
@@ -313,3 +314,20 @@ class Customer(models.Model):
     age = models.IntegerField()
     membership = models.ForeignKey(Membership, on_delete=models.SET_NULL, null=True, default=None)
 
+
+class Event(models.Model):
+    title = models.CharField(max_length=100)
+    description = models.TextField()
+    start_datetime = models.DateTimeField()
+    end_datetime = models.DateTimeField()
+    image_url = models.CharField(max_length=200, null=True, blank=True)
+    manager = models.ForeignKey(Staff, on_delete=models.SET_NULL, null=True, default=None)
+    attendees = models.ManyToManyField(
+        Customer,
+        related_name="events",
+        related_query_name="event",
+        blank=True,
+    )
+
+    def __str__(self):
+        return self.title
