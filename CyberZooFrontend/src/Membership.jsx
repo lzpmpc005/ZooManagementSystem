@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Modal } from 'react-bootstrap';
 import Payment from './transaction/Payment.jsx';
@@ -72,75 +73,87 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
         },
     };
 
-    const [modalTitle, setModalTitle] = useState('');
-    const [submitButtonText, setSubmitButtonText] = useState('');
-    const [membershipEndpoint, setMembershipEndpoint] = useState('');
-    const [memberships, setMemberships] = useState([]);
-    const [showModal, setShowModal] = useState(false);
-    const [formFields, setFormFields] = useState({
-        id: null,
-        tier: '',
-        price: '',
-        discount: '',
-        free_parking: false,
-        special_events: false
+  const [modalTitle, setModalTitle] = useState("");
+  const [submitButtonText, setSubmitButtonText] = useState("");
+  const [membershipEndpoint, setMembershipEndpoint] = useState("");
+  const [memberships, setMemberships] = useState([]);
+  const [showModal, setShowModal] = useState(false);
+  const [formFields, setFormFields] = useState({
+    id: null,
+    tier: "",
+    price: "",
+    discount: "",
+    free_parking: false,
+    special_events: false,
+  });
+
+
+  useEffect(() => {
+    fetch("http://127.0.0.1:8000/api/get_memberships/")
+      .then((response) => response.json())
+      .then((data) => setMemberships(data))
+      .catch((error) => console.log(error));
+  }, []);
+
+  const handleShowModal = () => setShowModal(true);
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setModalTitle("");
+    setSubmitButtonText("");
+    setMembershipEndpoint("");
+    setFormFields({
+      id: null,
+      tier: "",
+      price: "",
+      discount: "",
+      free_parking: false,
+      special_events: false,
     });
+  };
 
-    useEffect(() => {
-        fetch('http://127.0.0.1:8000/api/get_memberships/')
-            .then(response => response.json())
-            .then(data => setMemberships(data))
-            .catch(error => console.log(error));
-    }, []);
+  const handleUpdateMembership = (membership) => {
+    setFormFields({ ...membership });
+    setModalTitle("Update Membership");
+    setMembershipEndpoint("update_membership/");
+    setSubmitButtonText("Update");
+    handleShowModal();
+  };
 
-    const handleShowModal = () => setShowModal(true);
-    const handleCloseModal = () => {
-        setShowModal(false);
-        setModalTitle('');
-        setSubmitButtonText('');
-        setMembershipEndpoint('');
-        setFormFields({
-            id: null,
-            tier: '',
-            price: '',
-            discount: '',
-            free_parking: false,
-            special_events: false
-        });
-    };
+  const handleCreateMembership = () => {
+    setFormFields({
+      id: null,
+      tier: "",
+      price: "",
+      discount: "",
+      free_parking: false,
+      special_events: false,
+    });
+    setModalTitle("Create Membership");
+    setSubmitButtonText("Create");
+    setMembershipEndpoint("create_membership/");
+    handleShowModal();
+  };
 
-    const handleUpdateMembership = (membership) => {
-        setFormFields({ ...membership });
-        setModalTitle("Update Membership");
-        setMembershipEndpoint('update_membership/');
-        setSubmitButtonText("Update");
-        handleShowModal();
-    };
-    
-    const handleCreateMembership = () => {
-        setFormFields({
-            id: null,
-            tier: '',
-            price: '',
-            discount: '',
-            free_parking: false,
-            special_events: false
-        });
-        setModalTitle("Create Membership");
-        setSubmitButtonText("Create");
-        setMembershipEndpoint('create_membership/');
-        handleShowModal();
-    };
-    
+  const handleInputChange = (event) => {
+    const { name, value, type, checked } = event.target;
+    const fieldValue =
+      type === "checkbox"
+        ? checked
+        : type === "number"
+        ? parseFloat(value)
+        : value;
+    setFormFields((prevState) => ({
+      ...prevState,
+      [name]: fieldValue,
+    }));
+  };
 
-    const handleInputChange = event => {
-        const { name, value, type, checked } = event.target;
-        const fieldValue = type === 'checkbox' ? checked : type === 'number' ? parseFloat(value) : value;
-        setFormFields(prevState => ({
-            ...prevState,
-            [name]: fieldValue
-        }));
-    };
+  const handleCreateOrUpdate = (event) => {
+    event.preventDefault();
+    console.log(JSON.stringify(formFields));
+    const endpoint = formFields.id
+      ? "update_membership/"
+      : "create_membership/";
 
     const handleCreateOrUpdate = event => {
         event.preventDefault();
@@ -174,8 +187,9 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
         .catch(error => {
             console.log(error);
             window.alert(error);
-        });
-    };
+      });
+  };
+
 
     
     const handleJoinMembership = (selectedMembership, customerId) => {
@@ -290,8 +304,44 @@ const Membership = ({ userRole, userAge, userMembership, customerId, updateUserM
                             cursor: 'pointer'
                         }}
                         onClick={handleCreateMembership}
+          >
+            Create Membership
+          </button>
+        )}
+
+        <table
+          style={{
+            width: "100%",
+            borderCollapse: "collapse",
+            textAlign: "center",
+          }}
+        >
+          <tbody>
+            <tr>
+              <th style={styles.header}>Benefits</th>
+              {memberships.map((membership) => (
+                <th key={membership.id} style={styles.header}>
+                  {membership.tier === "Explorer" ? (
+                    <span>
+                      Explorer{" "}
+                      <span style={{ fontSize: "0.9em" }}>(Under 17 Only)</span>
+                    </span>
+                  ) : (
+                    membership.tier
+                  )}
+                </th>
+              ))}
+            </tr>
+            <tr>
+              <td style={styles.cell}></td>
+              {memberships.map((membership) => (
+                <td key={membership.id} style={styles.cell}>
+                  {userRole === "admin" ? (
+                    <button
+                      style={styles.button}
+                      onClick={() => handleUpdateMembership(membership)}
                     >
-                        Create Membership
+                      Update
                     </button>
                 )}
                 

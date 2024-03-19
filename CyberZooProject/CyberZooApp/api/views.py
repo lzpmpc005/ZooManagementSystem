@@ -17,6 +17,7 @@ from CyberZooApp.models import (
     Feedback,
     Membership,
     Customer,
+    Event,
 )
 from .serializers import (
     HabitatSerializer,
@@ -29,6 +30,7 @@ from .serializers import (
     StaffSerializer,
     MembershipSerializer,
     CustomerSerializer,
+    EventSerializer,
 )
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -462,5 +464,54 @@ def changeMembership(request):
             customer.membership = membership
             customer.save()
             return JsonResponse({"message": "Membership changed successfully"}, status=200)
+    except Exception as e:
+        return JsonResponse({"message": f"{e}"}, status=400)
+
+@api_view(['GET', 'POST'])
+def event_list(request):
+    if request.method == 'GET':
+        events = Event.objects.all()
+        serializer = EventSerializer(events, many=True)
+        return Response(serializer.data)
+    elif request.method == 'POST':
+        serializer = EventSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
+
+@api_view(['GET', 'PUT', 'DELETE'])
+def event_detail(request, pk):
+    try:
+        event = Event.objects.get(pk=pk)
+    except Event.DoesNotExist:
+        return Response(status=404)
+
+    if request.method == 'GET':
+        serializer = EventSerializer(event)
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        serializer = EventSerializer(event, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=400)
+    elif request.method == 'DELETE':
+        event.delete()
+        return Response(status=204)
+
+@api_view(['POST'])
+def send_event_email(request):
+    data = json.loads(request.body)
+    try:
+        print(data)
+        event_id = data.get("event_id")
+        membership_data = data.get("membership")
+        memberships = Membership.objects.get(special_events=True, tier=membership_data)
+        customers = Customer.objects.filter(membership=memberships)
+        # Send email logic
+        return JsonResponse({"message": "Email sent successfully", "customers": [
+            {"name": customer.user.username, "email": customer.user.email} for customer in customers
+        ]}, status=200)
     except Exception as e:
         return JsonResponse({"message": f"{e}"}, status=400)

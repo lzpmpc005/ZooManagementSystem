@@ -11,6 +11,7 @@ from CyberZooApp.models import (
     Feedback,
     Membership,
     Customer,
+    Event
 )
 from django.contrib.auth.models import User
 
@@ -110,3 +111,20 @@ class CustomerSerializer(ModelSerializer):
     class Meta:
         model = Customer
         fields = ["id", "age", "user", "membership"]
+
+class EventSerializer(ModelSerializer):
+    # manager = StaffSerializer(read_only=True)
+    # attendents = StaffSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Event
+        fields = "__all__"
+
+    def create(self, validated_data):
+        manager_data = validated_data.pop("manager")
+        manager = Staff.objects.get(user__username=manager_data)
+        event = Event.objects.create(manager=manager, **validated_data)
+        return event
+
+
+

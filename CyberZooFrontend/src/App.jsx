@@ -15,10 +15,10 @@ import StaffAssignedAnimals from "./StaffAssignedAnimals.jsx";
 import StaffAssignedTasks from "./StaffAssignedTasks.jsx";
 import ManageTours from "./ManageTours.jsx";
 import { logout } from "./services/userServices.js";
-import TourDetails from "./tours/tourDetails.jsx";
 import Membership from "./Membership.jsx";
 import CreateMembership from "./CreateMembership.jsx";
-import UserProfile from './UserProfile.jsx';
+import UserProfile from "./UserProfile.jsx";
+import Events from "./events/Events.jsx";
 
 function App() {
   const [loggedInUser, setLoggedInUser] = useState(null);
@@ -26,7 +26,6 @@ function App() {
   const [userRole, setUserRole] = useState(null);
   const [userAge, setUserAge] = useState(null);
   const [userMembership, setUserMembership] = useState(null);
-
 
   const handleLogin = (username, pk, role, age, membership) => {
     localStorage.setItem("loggedInUser", username);
@@ -40,7 +39,6 @@ function App() {
     setUserRole(role);
     setUserAge(age);
     setUserMembership(membership);
-
   };
 
   const updateUserMembership = (membership) => {
@@ -68,7 +66,7 @@ function App() {
     const role = localStorage.getItem("userRole");
     const age = localStorage.getItem("userAge");
     const membership = localStorage.getItem("userMembership");
-    
+
     if (user && pk) {
       setLoggedInUser(user);
       setLoggedInUserPk(pk);
@@ -103,6 +101,9 @@ function App() {
               </Nav.Link>
               <Nav.Link as={Link} to="/membership">
                 Membership
+              </Nav.Link>
+              <Nav.Link as={Link} to="/events">
+                Events
               </Nav.Link>
             </Nav>
             <Nav className="ml-auto">
@@ -142,7 +143,19 @@ function App() {
         <Route path="/home" element={<HomePage />} />
         <Route path="/animals" element={<Animals />} />
         <Route path="/tours" element={<Tours />} />
-        <Route path="/membership" element={<Membership userRole={userRole} userAge={userAge} userMembership={userMembership} customerId={loggedInUserPk} updateUserMembership={updateUserMembership} />} />
+        <Route
+          path="/membership"
+          element={
+            <Membership
+              userRole={userRole}
+              userAge={userAge}
+              userMembership={userMembership}
+              customerId={loggedInUserPk}
+              updateUserMembership={updateUserMembership}
+            />
+          }
+        />
+        <Route path="/events" element={<Events userRole={userRole} />} />
         <Route
           path="/assigned-animals"
           element={<StaffAssignedAnimals pk={loggedInUserPk} />}
@@ -156,7 +169,10 @@ function App() {
         <Route path="/manage-tours" element={<ManageTours />} />
         <Route path="/tours" element={<Tours />} />
         <Route path="/create-membership" element={<CreateMembership />} />
-        <Route path="/profile" element={<UserProfile customerId={loggedInUserPk} />} />
+        <Route
+          path="/profile"
+          element={<UserProfile customerId={loggedInUserPk} />}
+        />
       </Routes>
     </Router>
   );
